@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name" translatable="false">Noth Calculator</string>
+    <string name="all_clear" translatable="false">AC</string>
+    <string name="delete" translatable="false">&lt;</string>
+    <string name="brackets" translatable="false">( )</string>
+    <string name="equals" translatable="false">=</string>
+    <string name="textSize" translatable="false">50</string>
+</resources>

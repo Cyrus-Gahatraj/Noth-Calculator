@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".MainActivity">
+
+    <!-- Expression -->
+    <TextView
+        android:id="@+id/expressionView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:gravity="end"
+        android:layout_marginRight="18dp"
+        android:text=""
+        android:textSize="50sp"
+        android:textColor="@color/full_white"
+        app:layout_constraintBottom_toTopOf="@+id/resultView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Result -->
+    <TextView
+        android:id="@+id/resultView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:gravity="end"
+        android:layout_marginRight="18dp"
+        android:text = ""
+        android:textSize="35sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Calculator Grid -->
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="5"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Row 1 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAC"
+            style="@style/Button.Delete"
+            android:text="@string/all_clear"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnParentheses"
+            style="@style/Button.Operator"
+            android:text="( )"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPercent"
+            style="@style/Button.Operator"
+            android:text="%"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDivide"
+            style="@style/Button.Operator"
+            android:text="/"
+            android:onClick="onButtonClick"/>
+
+        <!-- Row 2 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn1"
+            style="@style/Button.Digits"
+            android:text="1"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn2"
+            style="@style/Button.Digits"
+            android:text="2"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn3"
+            style="@style/Button.Digits"
+            android:text="3"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMultiply"
+            style="@style/Button.Operator"
+            android:text="×"
+            android:onClick="onButtonClick"/>
+
+        <!-- Row 3 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn4"
+            style="@style/Button.Digits"
+            android:text="4"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn5"
+            style="@style/Button.Digits"
+            android:text="5"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn6"
+            style="@style/Button.Digits"
+            android:text="6"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMinus"
+            style="@style/Button.Operator"
+            android:text="-"
+            android:onClick="onButtonClick"/>
+
+        <!-- Row 4 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn7"
+            style="@style/Button.Digits"
+            android:text="7"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn8"
+            style="@style/Button.Digits"
+            android:text="8"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn9"
+            style="@style/Button.Digits"
+            android:text="9"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlus"
+            style="@style/Button.Operator"
+            android:text="+"
+            android:onClick="onButtonClick"/>
+
+        <!-- Row 5 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDot"
+            style="@style/Button.Digits"
+            android:text="."
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn0"
+            style="@style/Button.Digits"
+            android:text="0"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDelete"
+            style="@style/Button.Delete"
+            android:text="@string/delete"
+            android:onClick="onButtonClick"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEquals"
+            style="@style/Button.Equals"
+            android:text="@string/equals"
+            android:onClick="onButtonClick"/>
+
+    </GridLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
