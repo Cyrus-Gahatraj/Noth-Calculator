@@ -1,21 +1,34 @@
 package com.example.nothcalculator
 
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.gesture.Gesture
+import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.view.View
+import android.widget.Button
+import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Visibility
+
 import com.example.nothcalculator.MainActivity.Companion.MIN_DISTANT
 import kotlin.math.abs
-import kotlin.reflect.KProperty
 
 class History : AppCompatActivity(), GestureDetector.OnGestureListener {
+
+    // Recycle view
+    private val listOfCalculations = mutableListOf<CalculationHistory>()
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: CalculationAdapter
+    private lateinit var viewManager: RecyclerView.LayoutManager
+
+    // Database
+    private lateinit var db: HistoryDataBaseHelper
 
     private lateinit var gestureDetector: GestureDetector
     private var x2:Float = 0.0f
@@ -23,10 +36,50 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
     private var y2:Float = 0.0f
     private var y1:Float = 0.0f
 
+    // Buttons
+    private lateinit var backButton: TextView
+    private lateinit var clearButton: Button
+
+    @SuppressLint("NotifyDataSetChanged")
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
-        gestureDetector = GestureDetector(this,this)
+        gestureDetector = GestureDetector(this, this)
+
+        viewManager = LinearLayoutManager(this)
+        viewAdapter = CalculationAdapter(listOfCalculations)
+
+        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
+            setHasFixedSize(true)
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
+
+        db = HistoryDataBaseHelper(this@History)
+        val listOfCalculationHistory = db.getHistory()
+
+
+        listOfCalculations.clear()
+        listOfCalculations.addAll(listOfCalculationHistory)
+        viewAdapter.notifyDataSetChanged()
+
+        backButton = findViewById(R.id.backButton)
+        clearButton = findViewById(R.id.clearAllButton)
+
+        if (listOfCalculations.size == 0){
+            clearButton.visibility = View.GONE
+        }
+
+        backButton.setOnClickListener {
+            finish()
+        }
+
+        clearButton.setOnClickListener {
+            db.clearHistory()
+            listOfCalculations.clear()
+            viewAdapter.notifyDataSetChanged()
+        }
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean{
@@ -50,9 +103,7 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
 
                 if (abs(valueY) > MIN_DISTANT){
                     if (y2 < y1){
-                        Intent(this@History,MainActivity::class.java).also{
-                            startActivity(it)
-                        }
+                        finish()
                     }
                 }
             }
