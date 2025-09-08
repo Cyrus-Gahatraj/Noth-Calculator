@@ -2,7 +2,6 @@ package com.example.nothcalculator
 
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
@@ -14,18 +13,13 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Visibility
 
 import com.example.nothcalculator.MainActivity.Companion.MIN_DISTANT
 import kotlin.math.abs
 
 class History : AppCompatActivity(), GestureDetector.OnGestureListener {
 
-    // Recycle view
-    private val listOfCalculations = mutableListOf<CalculationHistory>()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var viewAdapter: CalculationAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
 
     // Database
     private lateinit var db: HistoryDataBaseHelper
@@ -47,40 +41,34 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
         setContentView(R.layout.activity_history)
         gestureDetector = GestureDetector(this, this)
 
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = CalculationAdapter(listOfCalculations)
-
-        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
-            setHasFixedSize(true)
-            layoutManager = viewManager
-            adapter = viewAdapter
-        }
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         db = HistoryDataBaseHelper(this@History)
         val listOfCalculationHistory = db.getHistory()
 
+        val groupedHistory = listOfCalculationHistory
+            .groupBy { it.date }
+            .map { (date, calculations) -> HistoryGroup(date, calculations) }
 
-        listOfCalculations.clear()
-        listOfCalculations.addAll(listOfCalculationHistory)
-        viewAdapter.notifyDataSetChanged()
+        val groupAdapter = CalculationGroupAdapter(groupedHistory)
+        recyclerView.adapter = groupAdapter
 
         backButton = findViewById(R.id.backButton)
         clearButton = findViewById(R.id.clearAllButton)
 
-        if (listOfCalculations.size == 0){
+        if (listOfCalculationHistory.isEmpty()) {
             clearButton.visibility = View.GONE
         }
 
-        backButton.setOnClickListener {
-            finish()
-        }
+        backButton.setOnClickListener { finish() }
 
         clearButton.setOnClickListener {
             db.clearHistory()
-            listOfCalculations.clear()
-            viewAdapter.notifyDataSetChanged()
+            recyclerView.adapter = CalculationGroupAdapter(emptyList())
         }
     }
+
 
     override fun onTouchEvent(event: MotionEvent): Boolean{
 
@@ -151,3 +139,5 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
     }
 
 }
+
+

@@ -11,12 +11,10 @@ class CalculationAdapter(private val listOfCalculation: MutableList<CalculationH
 
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val dateHeader: TextView
         val expression: TextView
         val result: TextView
 
         init {
-            dateHeader = view.findViewById(R.id.dateHeader)
             expression = view.findViewById(R.id.expressionText)
             result = view.findViewById(R.id.resultText)
         }
@@ -32,8 +30,6 @@ class CalculationAdapter(private val listOfCalculation: MutableList<CalculationH
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val calculation = listOfCalculation[position]
 
-        // If you later group by date, dateHeader should only be shown once per day
-        viewHolder.dateHeader.text = calculation.date
         viewHolder.expression.text = calculation.expression
         viewHolder.result.text = calculation.result
     }
