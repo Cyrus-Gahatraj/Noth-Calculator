@@ -3,23 +3,30 @@
     <style name="Base.Theme.NothCalculator" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:fontFamily">@font/noto_sans</item>
     </style>
+
+    <style name="SettingIcon">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="tint">@color/light_grey</item>
+    </style>
+
 
     <style name="Text.Heading" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/ndot</item>
         <item name="android:textSize">50sp</item>
-        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="Button.Digits" parent="Button.Base">
-        <item name="android:backgroundTint">@color/light_grey</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:backgroundTint">@color/smoke_white</item>
+        <item name="android:textColor">@color/full_black</item>
     </style>
 
     <style name="Button.Operator" parent="Button.Base">
-        <item name="android:backgroundTint">@color/grey</item>
-        <item name="android:textColor">@color/full_white</item>
+        <item name="android:backgroundTint">@color/steel</item>
+        <item name="android:textColor">@color/full_black</item>
     </style>
 
     <style name="Button.Delete" parent="Button.Base">
@@ -33,8 +40,8 @@
     </style>
 
     <style name="Button.Base" parent="Widget.Material3.Button">
-        <item name="android:layout_width">85dp</item>
-        <item name="android:layout_height">85dp</item>
+        <item name="android:layout_width">80dp</item>
+        <item name="android:layout_height">80dp</item>
         <item name="android:fontFamily">@font/ndot</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_margin">8dp</item>

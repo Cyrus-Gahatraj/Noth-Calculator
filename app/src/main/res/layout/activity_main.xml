@@ -6,20 +6,31 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
     tools:context=".MainActivity">
+
+    <ImageButton
+        android:id="@+id/btnSettings"
+        style="@style/SettingIcon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="Settings"
+        android:src="@drawable/baseline_settings_24"
+        app:layout_constraintBottom_toTopOf="@+id/gridLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.16000003" />
+
 
     <!-- Expression -->
     <TextView
         android:id="@+id/expressionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="end"
         android:layout_marginRight="18dp"
-        android:text=""
+        android:gravity="end"
         android:textSize="50sp"
-        android:textColor="@color/full_white"
         app:layout_constraintBottom_toTopOf="@+id/resultView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -29,12 +40,10 @@
         android:id="@+id/resultView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:gravity="end"
         android:layout_marginRight="18dp"
-        android:text = ""
+        android:gravity="end"
+        android:padding="7dp"
         android:textSize="35sp"
-        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/gridLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

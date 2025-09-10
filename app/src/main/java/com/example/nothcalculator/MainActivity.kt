@@ -8,6 +8,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
     private var isResultShown = false
     private lateinit var expressionView: TextView
     private lateinit var resultView: TextView
+    private lateinit var settingBtn: ImageButton
 
     companion object {
         const val MIN_DISTANT = 150
@@ -42,6 +44,13 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
         resultView = findViewById(R.id.resultView)
 
         gestureDetector = GestureDetector(this, this)
+
+        settingBtn = findViewById(R.id.btnSettings)
+        settingBtn.setOnClickListener {
+            Intent(this@MainActivity, Setting::class.java).also{
+                startActivity(it)
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)

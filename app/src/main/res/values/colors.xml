@@ -9,4 +9,6 @@
     <color name="yellow">#FFD606</color>
     <color name="full_black">#000000</color>
     <color name="full_white">#FFFFFF</color>
+    <color name="smoke_white">#F5F5F5</color>
+    <color name="steel">#DBE2E9</color>
 </resources>

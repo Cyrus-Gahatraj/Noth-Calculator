@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
-    android:background="@color/grey"
     android:orientation="vertical">
 
     <!-- Container for multiple history items of this day -->
@@ -25,7 +24,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="3 + 5 × 2"
-                android:textColor="@color/white"
                 android:textSize="17sp"
                 android:fontFamily="@font/noto_sans"
                 android:gravity="end"/>
@@ -35,7 +33,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="= 13"
-                android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:fontFamily="@font/noto_sans"
