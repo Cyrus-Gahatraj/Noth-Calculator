@@ -1,26 +1,25 @@
 package com.example.nothcalculator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 
-class Setting : AppCompatActivity() {
+class Settings : AppCompatActivity() {
 
-    private lateinit var backButton: TextView
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     private lateinit var modeSwitch: Switch
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_setting)
+        setContentView(R.layout.activity_settings)
 
-        backButton = findViewById(R.id.backButton)
-        backButton.setOnClickListener {
-            finish()
-        }
-
+        val heading = findViewById<HeadingView>(R.id.settingsHeader)
+        heading.setHeading("Settings")
+        heading.setBackButton{ finish() }
 
         modeSwitch = findViewById(R.id.modeSwitch)
 
@@ -46,7 +45,6 @@ class Setting : AppCompatActivity() {
                 editor.apply()
             }
         }
-
 
     }
 }

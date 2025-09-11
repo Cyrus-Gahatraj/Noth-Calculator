@@ -2,6 +2,7 @@ package com.example.nothcalculator
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.nothcalculator.MainActivity.Companion.MIN_DISTANT
 import kotlin.math.abs
 
+
+
 class History : AppCompatActivity(), GestureDetector.OnGestureListener {
 
     private lateinit var recyclerView: RecyclerView
@@ -30,20 +33,22 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
     private var y2:Float = 0.0f
     private var y1:Float = 0.0f
 
-    // Buttons
-    private lateinit var backButton: TextView
+
     private lateinit var clearButton: Button
 
-    @SuppressLint("NotifyDataSetChanged")
+
+    @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_history)
         gestureDetector = GestureDetector(this, this)
 
+        // RecyclerView setup
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        // Database setup
         db = HistoryDataBaseHelper(this@History)
         val listOfCalculationHistory = db.getHistory()
 
@@ -54,14 +59,16 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
         val groupAdapter = CalculationGroupAdapter(groupedHistory)
         recyclerView.adapter = groupAdapter
 
-        backButton = findViewById(R.id.backButton)
+        // Header setup
+        val header = findViewById<HeadingView>(R.id.historyHeader)
+        header.setHeading("History")
+        header.setBackButton { finish() }
+
         clearButton = findViewById(R.id.clearAllButton)
 
         if (listOfCalculationHistory.isEmpty()) {
             clearButton.visibility = View.GONE
         }
-
-        backButton.setOnClickListener { finish() }
 
         clearButton.setOnClickListener {
             db.clearHistory()
@@ -139,5 +146,6 @@ class History : AppCompatActivity(), GestureDetector.OnGestureListener {
     }
 
 }
+
 
 

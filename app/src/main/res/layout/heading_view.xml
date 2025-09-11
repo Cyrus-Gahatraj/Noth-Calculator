@@ -1,0 +1,30 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/ndot"
+        android:padding="12dp"
+        android:text="&lt;"
+        android:textSize="35sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/headingText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/headingText"
+        style="@style/Text.Heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="35dp"
+        android:text="Modes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</merge>
