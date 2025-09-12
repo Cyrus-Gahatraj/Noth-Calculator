@@ -1,25 +1,23 @@
 package com.example.nothcalculator
 
+import CalculatorGestureDetector
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
 import org.mariuszgromada.math.mxparser.Expression
-import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
 
-class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
+class MainActivity : AppCompatActivity(), CalculatorGestureListener {
 
     private var expression = ""
     private var openBracket = false
@@ -28,14 +26,8 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
     private lateinit var resultView: TextView
     private lateinit var settingBtn: ImageButton
 
-    companion object {
-        const val MIN_DISTANT = 150
-    }
+    private lateinit var gestureDetector: CalculatorGestureDetector
 
-    // Gesture Detection
-    private lateinit var gestureDetector: GestureDetector
-    private var x1: Float = 0.0f
-    private var y1: Float = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +37,7 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
         expressionView = calcDisplay.findViewById(R.id.expressionView)
         resultView = calcDisplay.findViewById(R.id.resultView)
 
-        gestureDetector = GestureDetector(this, this)
+        gestureDetector = CalculatorGestureDetector(this, this)
 
         settingBtn = calcDisplay.findViewById(R.id.btnSettings)
         settingBtn.setOnClickListener {
@@ -142,49 +134,20 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         gestureDetector.onTouchEvent(event)
-
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                x1 = event.x
-                y1 = event.y
-            }
-
-            MotionEvent.ACTION_UP -> {
-                val x2 = event.x
-                val y2 = event.y
-
-                val valueX: Float = x2 - x1
-                val valueY: Float = y2 - y1
-
-                if (abs(valueX) > MIN_DISTANT) {
-                    if (x2 < x1) {
-                        Toast.makeText(this, "Right", Toast.LENGTH_SHORT).show()
-                        // TODO: Make the other calculator
-                    }
-                } else if (abs(valueY) > MIN_DISTANT) {
-                    if (y2 > y1) {
-                        Intent(this@MainActivity, History::class.java).also {
-                            startActivity(it)
-                        }
-                    }
-                }
-            }
-        }
         return super.onTouchEvent(event)
     }
 
-    override fun onDown(e: MotionEvent): Boolean = false
-    override fun onFling(
-        e1: MotionEvent?, e2: MotionEvent,
-        velocityX: Float, velocityY: Float
-    ): Boolean = false
+    override fun onSwipeDown() {
+        Intent(this@MainActivity, History::class.java).also{
+            startActivity(it)
+        }
+    }
 
-    override fun onLongPress(e: MotionEvent) {}
-    override fun onScroll(
-        e1: MotionEvent?, e2: MotionEvent,
-        distanceX: Float, distanceY: Float
-    ): Boolean = false
+    override fun onSwipeLeft() {
+        Intent(this@MainActivity, Modes::class.java).also{
+            startActivity(it)
+        }
+    }
 
-    override fun onShowPress(e: MotionEvent) {}
-    override fun onSingleTapUp(e: MotionEvent): Boolean = false
+
 }
