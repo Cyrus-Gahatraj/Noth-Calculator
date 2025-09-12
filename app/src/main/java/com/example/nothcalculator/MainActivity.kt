@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
 import org.mariuszgromada.math.mxparser.Expression
 import kotlin.math.abs
@@ -40,14 +41,15 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        expressionView = findViewById(R.id.expressionView)
-        resultView = findViewById(R.id.resultView)
+        val calcDisplay = findViewById<ConstraintLayout>(R.id.calcDisplay)
+        expressionView = calcDisplay.findViewById(R.id.expressionView)
+        resultView = calcDisplay.findViewById(R.id.resultView)
 
         gestureDetector = GestureDetector(this, this)
 
-        settingBtn = findViewById(R.id.btnSettings)
+        settingBtn = calcDisplay.findViewById(R.id.btnSettings)
         settingBtn.setOnClickListener {
-            Intent(this@MainActivity, Setting::class.java).also{
+            Intent(this@MainActivity, Settings::class.java).also{
                 startActivity(it)
             }
         }
