@@ -111,6 +111,9 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
     @RequiresApi(Build.VERSION_CODES.P)
     @SuppressLint("SetTextI18n")
     private fun calculateResult() {
+        if (expression == ""){
+            return
+        }
         val expObj = Expression(expression)
         val result = expObj.calculate()
 
