@@ -12,6 +12,14 @@
         <item name="tint">@color/steel</item>
     </style>
 
+    <style name="ModesCard">
+        <item name="colorOnBackground">@color/black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@color/grey</item>
+        <item name="android:textStyle">bold </item>
+    </style>
+
     <style name="Text.Heading" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/ndot</item>
         <item name="android:textSize">50sp</item>
@@ -44,6 +52,40 @@
         <item name="android:fontFamily">@font/ndot</item>
         <item name="android:textSize">20sp</item>
         <item name="android:layout_margin">8dp</item>
+        <item name="shapeAppearance">@style/RoundShape</item>
+    </style>
+
+    <style name="Button.Scientific.Digits" parent="Button.Scientific">
+        <item name="android:backgroundTint">@color/light_grey</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Button.Scientific.Operator" parent="Button.Scientific">
+        <item name="android:backgroundTint">@color/grey</item>
+        <item name="android:textColor">@color/full_white</item>
+    </style>
+
+    <style name="Button.Scientific.Delete" parent="Button.Scientific">
+        <item name="android:backgroundTint">@color/red</item>
+        <item name="android:textColor">@color/full_white</item>
+    </style>
+
+    <style name="Button.Scientific.Equals" parent="Button.Scientific">
+        <item name="android:backgroundTint">@color/yellow</item>
+        <item name="android:textColor">@color/full_black</item>
+    </style>
+
+    <style name="Button.Scientific.Function" parent="Button.Scientific">
+        <item name="android:backgroundTint">@color/blue</item>
+        <item name="android:textColor">@color/full_white</item>
+    </style>
+
+    <style name="Button.Scientific" parent="Widget.Material3.Button">
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">68dp</item>
+        <item name="android:fontFamily">@font/ndot</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:layout_margin">4dp</item>
         <item name="shapeAppearance">@style/RoundShape</item>
     </style>
 

@@ -11,4 +11,6 @@
     <color name="full_white">#FFFFFF</color>
     <color name="smoke_white">#F5F5F5</color>
     <color name="steel">#DBE2E9</color>
+    <color name="blue">#3A506B</color>
+    <color name="sky_blue">#77bbd9</color>
 </resources>

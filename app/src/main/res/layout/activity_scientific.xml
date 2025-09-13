@@ -7,4 +7,254 @@
     android:layout_height="match_parent"
     tools:context=".Scientific">
 
+    <include
+        layout="@layout/calc_display_view"
+        android:id="@+id/calcDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/gridLayout" />
+
+    <GridLayout
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="5"
+        android:rowCount="7"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="true"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Row 1 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSin"
+            style="@style/Button.Scientific.Function"
+            android:text="sin"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCos"
+            style="@style/Button.Scientific.Function"
+            android:onClick="onButtonClick"
+            android:text="cos" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTan"
+            style="@style/Button.Scientific.Function"
+            android:onClick="onButtonClick"
+            android:text="tan" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLn"
+            style="@style/Button.Scientific.Function"
+            android:text="ln"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLog"
+            style="@style/Button.Scientific.Function"
+            android:text="log"
+            android:onClick="onButtonClick" />
+
+
+<!--        Row 2-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRoot"
+            style="@style/Button.Scientific.Function"
+            android:text="√"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSquare"
+            style="@style/Button.Scientific.Function"
+            android:text="x²"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPower"
+            style="@style/Button.Scientific.Function"
+            android:text="x^y"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMod"
+            style="@style/Button.Scientific.Function"
+            android:text="mod"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFactorial"
+            style="@style/Button.Scientific.Function"
+            android:text="!"
+            android:onClick="onButtonClick" />
+
+<!--        Row 3-->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAC"
+            style="@style/Button.Scientific.Delete"
+            android:text="@string/all_clear"
+            android:onClick="onButtonClick" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRightBracket"
+            style="@style/Button.Scientific.Operator"
+            android:text="("
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLeftBracket"
+            style="@style/Button.Scientific.Operator"
+            android:text=")"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDivide"
+            style="@style/Button.Scientific.Operator"
+            android:text="/"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlusMinus"
+            style="@style/Button.Scientific.Operator"
+            android:text="±"
+            android:onClick="onButtonClick" />
+
+        <!-- Row 4 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn7"
+            style="@style/Button.Scientific.Digits"
+            android:text="1"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn8"
+            style="@style/Button.Scientific.Digits"
+            android:text="2"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn9"
+            style="@style/Button.Scientific.Digits"
+            android:text="3"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMultiply"
+            style="@style/Button.Scientific.Operator"
+            android:onClick="onButtonClick"
+            android:text="×" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPercent"
+            style="@style/Button.Scientific.Operator"
+            android:text="%"
+            android:onClick="onButtonClick" />
+
+
+
+        <!-- Row 5 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn4"
+            style="@style/Button.Scientific.Digits"
+            android:text="4"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn5"
+            style="@style/Button.Scientific.Digits"
+            android:text="5"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn6"
+            style="@style/Button.Scientific.Digits"
+            android:text="6"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMinus"
+            style="@style/Button.Scientific.Operator"
+            android:text="-"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnE"
+            style="@style/Button.Scientific.Function"
+            android:text="e"
+            android:onClick="onButtonClick" />
+
+        <!-- Row 6 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn1"
+            style="@style/Button.Scientific.Digits"
+            android:text="7"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn2"
+            style="@style/Button.Scientific.Digits"
+            android:text="8"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn3"
+            style="@style/Button.Scientific.Digits"
+            android:text="9"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlus"
+            style="@style/Button.Scientific.Operator"
+            android:text="+"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPi"
+            style="@style/Button.Scientific.Function"
+            android:text="π"
+            android:onClick="onButtonClick" />
+
+        <!-- Row 7 -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn0"
+            style="@style/Button.Scientific.Digits"
+            android:text="."
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDot"
+            style="@style/Button.Scientific.Digits"
+            android:text="0"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDelete"
+            style="@style/Button.Scientific.Delete"
+            android:onClick="onButtonClick"
+            android:text="@string/delete"
+            android:textAllCaps="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAnswer"
+            style="@style/Button.Scientific.Digits"
+            android:text="@string/answer"
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEquals"
+            style="@style/Button.Scientific.Equals"
+            android:text="@string/equals"
+            android:onClick="onButtonClick" />
+
+        <!-- Row 7: Additional scientific functions -->
+    </GridLayout>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
