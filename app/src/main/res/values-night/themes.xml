@@ -82,7 +82,7 @@
 
     <style name="Button.Scientific" parent="Widget.Material3.Button">
         <item name="android:layout_width">70dp</item>
-        <item name="android:layout_height">68dp</item>
+        <item name="android:layout_height">60dp</item>
         <item name="android:fontFamily">@font/ndot</item>
         <item name="android:textSize">11sp</item>
         <item name="android:layout_margin">4dp</item>
