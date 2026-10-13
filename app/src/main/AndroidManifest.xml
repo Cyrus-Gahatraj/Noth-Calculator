@@ -13,9 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NothCalculator">
         <activity
-            android:name=".HeadingView"
-            android:exported="false" />
-        <activity
             android:name=".Scientific"
             android:exported="false" />
         <activity
@@ -23,9 +20,6 @@
             android:exported="false" />
         <activity
             android:name=".Settings"
-            android:exported="false" />
-        <activity
-            android:name=".ScientificMode"
             android:exported="false" />
         <activity
             android:name=".History"
