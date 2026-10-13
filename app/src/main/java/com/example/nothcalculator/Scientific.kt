@@ -22,6 +22,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     private lateinit var gestureDetector: CalculatorGestureDetector
 
     private var expression = ""
+    private var lastAnswer = "0"
 
     private var isResultShown = false
     private lateinit var expressionView: TextView
@@ -71,16 +72,14 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             getString(R.string.equals) -> calculateResult()
 
             getString(R.string.answer) -> {
-                if (resultView.text != "Error") {
-                    if (isResultShown) {
-                        expression = getString(R.string.answer)
-                    } else {
-                        expression += getString(R.string.answer)
-                    }
-                    expressionView.text = expression
-                    resultView.visibility = View.GONE
-                    isResultShown = false
+                if (isResultShown) {
+                    expression = getString(R.string.answer)
+                } else {
+                    expression += getString(R.string.answer)
                 }
+                expressionView.text = expression
+                resultView.visibility = View.GONE
+                isResultShown = false
             }
 
             else -> {
@@ -129,6 +128,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             }
             resultView.text = resultString
             expression = resultString
+            lastAnswer = resultString
 
             saveToDB(expressionView.text.toString(), resultString)
         }
@@ -152,9 +152,9 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    fun replace(expression: String): String{
+    fun replace(expression: String): String {
         var newExpression = expression.replace("mod", "#")
-        newExpression = newExpression.replace(getString(R.string.answer), resultView.text.toString() )
+        newExpression = newExpression.replace(getString(R.string.answer), lastAnswer)
         return newExpression
     }
     private fun normalizeExpression(exp: String): String {
