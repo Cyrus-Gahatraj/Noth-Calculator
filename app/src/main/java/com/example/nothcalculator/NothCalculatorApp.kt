@@ -16,12 +16,12 @@ class NothCalculatorApp : Application() {
     
     private fun applySavedTheme() {
         val sharedPreferences = getSharedPreferences("Mode", Context.MODE_PRIVATE)
-        val isNightMode = sharedPreferences.getBoolean("night", false)
+        val themeMode = sharedPreferences.getString("theme_mode", "system") ?: "system"
         
-        val nightMode = if (isNightMode) {
-            AppCompatDelegate.MODE_NIGHT_YES
-        } else {
-            AppCompatDelegate.MODE_NIGHT_NO
+        val nightMode = when (themeMode) {
+            "dark" -> AppCompatDelegate.MODE_NIGHT_YES
+            "light" -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
         
         AppCompatDelegate.setDefaultNightMode(nightMode)

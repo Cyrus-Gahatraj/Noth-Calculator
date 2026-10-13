@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         if (view is MaterialButton) {
             val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
             if (settingsPrefs.getBoolean("vibration", true)) {
-                vibrateClick()
+                vibrateClick(view)
             }
 
             val buttonText = view.text.toString()
@@ -123,8 +123,14 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    private fun vibrateClick() {
+    @Suppress("DEPRECATION")
+    private fun vibrateClick(view: View) {
         try {
+            view.isHapticFeedbackEnabled = true
+            view.performHapticFeedback(
+                android.view.HapticFeedbackConstants.KEYBOARD_TAP,
+                android.view.HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING or android.view.HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+            )
             val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
                 vibratorManager?.defaultVibrator
@@ -132,11 +138,13 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
                 @Suppress("DEPRECATION")
                 getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
-            } else {
-                @Suppress("DEPRECATION")
-                vibrator?.vibrate(20L)
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(30L, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    vibrator.vibrate(30L)
+                }
             }
         } catch (_: Exception) {}
     }

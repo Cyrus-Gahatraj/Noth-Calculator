@@ -57,6 +57,8 @@ class CalculatorGestureDetector(context: Context, private val listener: Calculat
         } else {
             if (valueX < -MIN_DISTANT) {
                 listener.onSwipeLeft()
+            } else if (valueX > MIN_DISTANT) {
+                listener.onSwipeRight()
             }
         }
         return true
