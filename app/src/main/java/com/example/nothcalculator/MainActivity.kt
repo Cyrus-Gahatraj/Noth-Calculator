@@ -19,7 +19,6 @@ import kotlin.math.floor
 class MainActivity : AppCompatActivity(), CalculatorGestureListener {
 
     private var expression = ""
-    private var openBracket = false
     private var isResultShown = false
     private lateinit var expressionView: TextView
     private lateinit var resultView: TextView
@@ -57,7 +56,6 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
                     expressionView.text = ""
                     resultView.text = ""
                     resultView.visibility = View.GONE
-                    openBracket = false
                     isResultShown = false
                 }
 
@@ -75,8 +73,15 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
                 }
 
                 getString(R.string.brackets) -> {
-                    expression += if (openBracket) ")" else "("
-                    openBracket = !openBracket
+                    val openCount = expression.count { it == '(' }
+                    val closeCount = expression.count { it == ')' }
+                    val bracket = if (openCount > closeCount && expression.isNotEmpty()) {
+                        val last = expression.last()
+                        if (last.isDigit() || last == ')' || last == '%') ")" else "("
+                    } else {
+                        "("
+                    }
+                    expression += bracket
                     expressionView.text = expression
                     resultView.visibility = View.GONE
                     isResultShown = false
@@ -107,13 +112,24 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         db.addCalculation(exp, result, date)
     }
 
+    private fun normalizeExpression(exp: String): String {
+        var s = exp
+        val opens = s.count { it == '(' }
+        val closes = s.count { it == ')' }
+        if (opens > closes) {
+            s += ")".repeat(opens - closes)
+        }
+        return s
+    }
+
     @RequiresApi(Build.VERSION_CODES.P)
     @SuppressLint("SetTextI18n")
     private fun calculateResult() {
-        if (expression == ""){
+        if (expression == "") {
             return
         }
-        val expObj = Expression(expression)
+        val normalized = normalizeExpression(expression)
+        val expObj = Expression(normalized)
         val result = expObj.calculate()
 
         if (result.isNaN()) {
