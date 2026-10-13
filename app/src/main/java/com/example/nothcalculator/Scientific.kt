@@ -170,26 +170,46 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     private fun toggleSign() {
         if (expression.isEmpty()) {
             expression = "-"
-            expressionView.text = expression
-            return
-        }
-
-        val i = expression.lastIndex
-        var start = i
-        while (start >= 0 && (expression[start].isDigit() || expression[start] == '.')) {
-            start--
-        }
-        val segmentStart = start + 1
-
-        if (segmentStart <= i) {
-            val seg = expression.substring(segmentStart..i)
-            if (segmentStart >= 1 && expression[segmentStart - 1] == '-') {
-                expression = expression.removeRange(segmentStart - 1, segmentStart) + seg
-            } else {
-                expression = expression.substring(0, segmentStart) + "-" + expression.substring(segmentStart)
-            }
+        } else if (expression == "-") {
+            expression = ""
         } else {
-            expression = "-" + expression
+            val lastChar = expression.last()
+            val operators = listOf('+', '-', '*', '/', '(', '^', '#', '×')
+
+            if (lastChar == '-') {
+                expression = if (expression.length >= 2 && expression[expression.length - 2] in operators) {
+                    expression.dropLast(1)
+                } else if (expression.length >= 2) {
+                    expression.dropLast(1) + "+"
+                } else {
+                    ""
+                }
+            } else if (lastChar == '+') {
+                expression = expression.dropLast(1) + "-"
+            } else if (lastChar in operators) {
+                expression = "$expression-"
+            } else {
+                var start = expression.lastIndex
+                while (start >= 0 && (expression[start].isDigit() || expression[start] == '.')) {
+                    start--
+                }
+                val numStart = start + 1
+                expression = if (numStart > expression.lastIndex) {
+                    "$expression-"
+                } else if (numStart == 0) {
+                    "-$expression"
+                } else if (numStart == 1 && expression[0] == '-') {
+                    expression.substring(1)
+                } else if (numStart >= 2 && expression[numStart - 1] == '-' && expression[numStart - 2] in operators) {
+                    expression.removeRange(numStart - 1, numStart)
+                } else if (expression[numStart - 1] == '-') {
+                    expression.substring(0, numStart - 1) + "+" + expression.substring(numStart)
+                } else if (expression[numStart - 1] == '+') {
+                    expression.substring(0, numStart - 1) + "-" + expression.substring(numStart)
+                } else {
+                    expression.substring(0, numStart) + "-" + expression.substring(numStart)
+                }
+            }
         }
 
         expressionView.text = expression
