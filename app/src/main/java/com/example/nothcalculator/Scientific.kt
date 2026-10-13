@@ -2,19 +2,16 @@ package com.example.nothcalculator
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
 import org.mariuszgromada.math.mxparser.Expression
 import kotlin.math.ceil
-import kotlin.math.exp
 import kotlin.math.floor
 
 class Scientific : AppCompatActivity(), CalculatorGestureListener {
@@ -45,8 +42,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
-    @SuppressLint("SetTextI18n") // Add this annotation
+    @SuppressLint("SetTextI18n")
     fun onButtonClick(view: View) {
         if (view !is MaterialButton) return
 
@@ -100,7 +96,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             expressionView.textSize = getString(R.string.textSize).toFloat()
         }
     }
-    @RequiresApi(Build.VERSION_CODES.P)
+
     private fun saveToDB(exp: String, result: String) {
         val db = HistoryDataBaseHelper(this)
         val date = java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.getDefault())
@@ -108,7 +104,6 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         db.addCalculation(exp, result, date)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     @SuppressLint("SetTextI18n")
     private fun calculateResult() {
         expression = replace(expression)

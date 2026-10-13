@@ -2,13 +2,11 @@ package com.example.nothcalculator
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import android.widget.ImageButton
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
@@ -45,7 +43,6 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     fun onButtonClick(view: View) {
         if (view is MaterialButton) {
             val buttonText = view.text.toString()
@@ -104,7 +101,6 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     private fun saveToDB(exp: String, result: String) {
         val db = HistoryDataBaseHelper(this)
         val date = java.text.SimpleDateFormat("MMM d, yyyy", java.util.Locale.getDefault())
@@ -122,7 +118,6 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         return s
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     @SuppressLint("SetTextI18n")
     private fun calculateResult() {
         if (expression == "") {
