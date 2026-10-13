@@ -1,16 +1,18 @@
 package com.example.nothcalculator
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
+import com.google.android.material.card.MaterialCardView
 
 class Modes : AppCompatActivity(), CalculatorGestureListener {
 
-    private lateinit var default: CardView
-    private lateinit var scientific: CardView
+    private lateinit var defaultCard: MaterialCardView
+    private lateinit var scientificCard: MaterialCardView
     private lateinit var gestureDetector: CalculatorGestureDetector
 
     @SuppressLint("MissingInflatedId")
@@ -21,11 +23,23 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
         gestureDetector = CalculatorGestureDetector(this, this)
 
         val header = findViewById<HeadingView>(R.id.modeHeader)
-        header.setHeading("Mode")
+        header.setHeading("Modes")
         header.setBackButton { finish() }
 
-        default = findViewById(R.id.defaultCalc)
-        default.setOnClickListener {
+        val currentMode = intent.getStringExtra("current_mode") ?: "Default"
+        val dotDefault = findViewById<View>(R.id.dotActiveDefault)
+        val dotScientific = findViewById<View>(R.id.dotActiveScientific)
+        if (currentMode == "Default") {
+            dotDefault.visibility = View.VISIBLE
+            dotScientific.visibility = View.GONE
+        } else {
+            dotDefault.visibility = View.GONE
+            dotScientific.visibility = View.VISIBLE
+        }
+
+        defaultCard = findViewById(R.id.defaultCalc)
+        defaultCard.setOnClickListener {
+            vibrateTap(it)
             val intent = Intent(this@Modes, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 putExtra("switched_mode", true)
@@ -34,13 +48,21 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
             finish()
         }
 
-        scientific = findViewById(R.id.scientificCalc)
-        scientific.setOnClickListener {
+        scientificCard = findViewById(R.id.scientificCalc)
+        scientificCard.setOnClickListener {
+            vibrateTap(it)
             val intent = Intent(this@Modes, Scientific::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
             startActivity(intent)
             finish()
+        }
+    }
+
+    private fun vibrateTap(view: View) {
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        if (settingsPrefs.getBoolean("vibration", true)) {
+            view.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
         }
     }
 

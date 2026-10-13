@@ -55,6 +55,10 @@ class History : AppCompatActivity(), CalculatorGestureListener {
         header.setBackButton { finish() }
 
         clearButton.setOnClickListener {
+            val settingsPrefs = getSharedPreferences("Settings", android.content.Context.MODE_PRIVATE)
+            if (settingsPrefs.getBoolean("vibration", true)) {
+                it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+            }
             db.clearHistory()
             recyclerView.adapter = CalculationGroupAdapter(emptyList())
             emptyHistoryView.visibility = View.VISIBLE

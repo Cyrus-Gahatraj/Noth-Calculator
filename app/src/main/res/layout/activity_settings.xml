@@ -131,7 +131,9 @@
                         <androidx.appcompat.widget.SwitchCompat
                             android:id="@+id/screenOnSwitch"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            app:thumbTint="@color/switch_thumb_selector"
+                            app:trackTint="@color/switch_track_selector" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -184,7 +186,9 @@
                     <androidx.appcompat.widget.SwitchCompat
                         android:id="@+id/vibrationSwitch"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        app:thumbTint="@color/switch_thumb_selector"
+                        app:trackTint="@color/switch_track_selector" />
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -386,7 +390,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Version 0.4.5 • Nothing OS aesthetic" />
+                            android:text="Version 0.4.6 • Nothing OS aesthetic" />
                     </LinearLayout>
 
                     <View

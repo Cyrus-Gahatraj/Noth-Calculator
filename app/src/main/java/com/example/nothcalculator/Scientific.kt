@@ -36,6 +36,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     private lateinit var resultScrollView: HorizontalScrollView
     private lateinit var settingBtn: ImageButton
 
+    private lateinit var modeBadge: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scientific)
@@ -45,6 +47,19 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         resultView = calcDisplay.findViewById(R.id.resultView)
         expressionScrollView = calcDisplay.findViewById(R.id.expressionScrollView)
         resultScrollView = calcDisplay.findViewById(R.id.resultScrollView)
+
+        modeBadge = calcDisplay.findViewById(R.id.tvModeBadge)
+        modeBadge.visibility = View.VISIBLE
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val initialAngle = settingsPrefs.getString("angle_unit", "DEG") ?: "DEG"
+        modeBadge.text = initialAngle
+        modeBadge.setOnClickListener {
+            val newAngle = if (modeBadge.text == "DEG") "RAD" else "DEG"
+            getSharedPreferences("Settings", Context.MODE_PRIVATE).edit()
+                .putString("angle_unit", newAngle).apply()
+            modeBadge.text = newAngle
+            vibrateClick(it)
+        }
 
         gestureDetector = CalculatorGestureDetector(this, this)
 
@@ -61,6 +76,10 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        val angleUnit = settingsPrefs.getString("angle_unit", "DEG") ?: "DEG"
+        if (::modeBadge.isInitialized) {
+            modeBadge.text = angleUnit
         }
     }
 
@@ -147,6 +166,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     }
 
     private fun updateExpressionDisplay() {
+        expressionView.alpha = 1.0f
         expressionView.text = expression
         val len = expression.length
         val size = when {
@@ -177,6 +197,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         }
         resultView.textSize = size
         expressionView.textSize = 24f
+        expressionView.alpha = 0.55f
+        resultView.alpha = 1.0f
         resultScrollView.visibility = View.VISIBLE
         isResultShown = true
         resultScrollView.post {
@@ -325,6 +347,10 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     }
 
     override fun onSwipeLeft() {
-        startActivity(Intent(this@Scientific, Modes::class.java))
+        Intent(this@Scientific, Modes::class.java).apply {
+            putExtra("current_mode", "Scientific")
+        }.also {
+            startActivity(it)
+        }
     }
 }

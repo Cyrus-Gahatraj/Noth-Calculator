@@ -1,30 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="@font/ndot"
-        android:padding="12dp"
+        android:gravity="center"
         android:text="&lt;"
-        android:textSize="35sp"
-        app:layout_constraintBaseline_toBaselineOf="@id/headingText"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@id/headingText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/headingText" />
 
     <TextView
         android:id="@+id/headingText"
         style="@style/Text.Heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="35dp"
-        android:text="Modes"
+        android:letterSpacing="0.06"
+        android:paddingTop="44dp"
+        android:paddingBottom="16dp"
+        android:text="MODES"
+        android:textAllCaps="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </merge>

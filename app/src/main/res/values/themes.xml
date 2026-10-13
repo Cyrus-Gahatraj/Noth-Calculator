@@ -2,9 +2,17 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.NothCalculator" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="android:background">@color/white</item>
+        <item name="android:windowBackground">@color/background_light</item>
+        <item name="android:colorBackground">@color/background_light</item>
+        <item name="android:background">@color/background_light</item>
         <item name="android:textColor">@color/full_black</item>
         <item name="android:fontFamily">@font/noto_sans</item>
+        <item name="colorPrimary">@color/red</item>
+        <item name="colorSecondary">@color/red</item>
+        <item name="colorControlActivated">@color/red</item>
+        <item name="android:statusBarColor">@color/background_light</item>
+        <item name="android:navigationBarColor">@color/background_light</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="SettingIcon">
@@ -15,26 +23,32 @@
     <style name="ModesCard">
         <item name="colorOnBackground">@color/full_black</item>
         <item name="android:gravity">center</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:background">@color/steel</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/ndot</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textColor">@color/full_black</item>
     </style>
-
 
     <style name="Text.Heading" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/ndot</item>
-        <item name="android:textSize">50sp</item>
+        <item name="android:textSize">40sp</item>
         <item name="android:textColor">@color/full_black</item>
+        <item name="android:letterSpacing">0.06</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="Button.Digits" parent="Button.Base">
-        <item name="android:backgroundTint">@color/smoke_white</item>
+        <item name="android:backgroundTint">@color/full_white</item>
         <item name="android:textColor">@color/full_black</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
     </style>
 
     <style name="Button.Operator" parent="Button.Base">
         <item name="android:backgroundTint">@color/steel</item>
         <item name="android:textColor">@color/full_black</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
     </style>
 
     <style name="Button.Delete" parent="Button.Base">
@@ -43,49 +57,61 @@
     </style>
 
     <style name="Button.Equals" parent="Button.Base">
-        <item name="android:backgroundTint">@color/yellow</item>
-        <item name="android:textColor">@color/full_black</item>
+        <item name="android:backgroundTint">@color/red</item>
+        <item name="android:textColor">@color/full_white</item>
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="Button.Base" parent="Widget.Material3.Button">
         <item name="android:layout_width">80dp</item>
         <item name="android:layout_height">80dp</item>
         <item name="android:fontFamily">@font/ndot</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:layout_margin">8dp</item>
         <item name="shapeAppearance">@style/RoundShape</item>
     </style>
 
     <style name="Button.Scientific.Digits" parent="Button.Scientific">
-        <item name="android:backgroundTint">@color/smoke_white</item>
+        <item name="android:backgroundTint">@color/full_white</item>
         <item name="android:textColor">@color/full_black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
     </style>
 
     <style name="Button.Scientific.Operator" parent="Button.Scientific">
         <item name="android:backgroundTint">@color/steel</item>
         <item name="android:textColor">@color/full_black</item>
+        <item name="android:textSize">14sp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
     </style>
 
     <style name="Button.Scientific.Delete" parent="Button.Scientific">
         <item name="android:backgroundTint">@color/red</item>
         <item name="android:textColor">@color/full_white</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="Button.Scientific.Equals" parent="Button.Scientific">
-        <item name="android:backgroundTint">@color/yellow</item>
-        <item name="android:textColor">@color/full_black</item>
+        <item name="android:backgroundTint">@color/red</item>
+        <item name="android:textColor">@color/full_white</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="Button.Scientific.Function" parent="Button.Scientific">
         <item name="android:backgroundTint">@color/sky_blue</item>
-        <item name="android:textColor">@color/full_white</item>
+        <item name="android:textColor">@color/full_black</item>
+        <item name="android:textSize">12sp</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
     </style>
 
     <style name="Button.Scientific" parent="Widget.Material3.Button">
         <item name="android:layout_width">68dp</item>
         <item name="android:layout_height">58dp</item>
         <item name="android:fontFamily">@font/ndot</item>
-        <item name="android:textSize">11sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:layout_margin">3dp</item>
         <item name="shapeAppearance">@style/RoundShape</item>
     </style>
@@ -95,17 +121,18 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/red</item>
         <item name="android:letterSpacing">0.08</item>
+        <item name="android:textAllCaps">true</item>
         <item name="android:paddingStart">4dp</item>
         <item name="android:paddingBottom">6dp</item>
         <item name="android:paddingTop">14dp</item>
     </style>
 
     <style name="SettingsCard" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">14dp</item>
+        <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">0dp</item>
         <item name="strokeWidth">1dp</item>
-        <item name="strokeColor">@color/settings_divider_light</item>
-        <item name="cardBackgroundColor">@color/smoke_white</item>
+        <item name="strokeColor">@color/surface_stroke_light</item>
+        <item name="cardBackgroundColor">@color/surface_light</item>
     </style>
 
     <style name="SettingsItemTitle">
@@ -124,7 +151,8 @@
     <style name="SettingsActionText">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/red</item>
-        <item name="android:fontFamily">@font/noto_sans</item>
+        <item name="android:fontFamily">@font/ndot</item>
+        <item name="android:letterSpacing">0.04</item>
         <item name="android:textStyle">bold</item>
     </style>
 

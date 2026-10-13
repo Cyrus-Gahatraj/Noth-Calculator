@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
     }
 
     private fun updateExpressionDisplay() {
+        expressionView.alpha = 1.0f
         expressionView.text = expression
         val len = expression.length
         val size = when {
@@ -180,6 +181,8 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         }
         resultView.textSize = size
         expressionView.textSize = 24f
+        expressionView.alpha = 0.55f
+        resultView.alpha = 1.0f
         resultScrollView.visibility = View.VISIBLE
         isResultShown = true
         resultScrollView.post {
@@ -247,7 +250,9 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
     }
 
     override fun onSwipeLeft() {
-        Intent(this@MainActivity, Modes::class.java).also {
+        Intent(this@MainActivity, Modes::class.java).apply {
+            putExtra("current_mode", "Default")
+        }.also {
             startActivity(it)
         }
     }

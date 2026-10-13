@@ -1,20 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#1B1B1D</color>
-    <color name="white">#EBEFF2</color>
-    <color name="grey">#2C2C2C</color>
-    <color name="light_grey">#3A3A3A</color>
-    <color name="red">#D71921</color>
-    <color name="mute_red">#FF3B30</color>
-    <color name="yellow">#FFD606</color>
+    <!-- Nothing OS Pitch Palette -->
     <color name="full_black">#000000</color>
     <color name="full_white">#FFFFFF</color>
-    <color name="smoke_white">#F5F5F5</color>
-    <color name="steel">#DBE2E9</color>
-    <color name="blue">#3A506B</color>
-    <color name="sky_blue">#77bbd9</color>
-    <color name="settings_subtitle_light">#757575</color>
-    <color name="settings_subtitle_dark">#A0A0A0</color>
-    <color name="settings_divider_light">#E0E0E0</color>
-    <color name="settings_divider_dark">#383838</color>
+
+    <!-- Surfaces & Strokes -->
+    <color name="surface_dark">#121214</color>
+    <color name="surface_stroke_dark">#26262A</color>
+    <color name="surface_light">#FFFFFF</color>
+    <color name="surface_stroke_light">#E5E7EB</color>
+    <color name="background_light">#F5F5F7</color>
+    <color name="background_dark">#000000</color>
+
+    <!-- Semantic Grayscale -->
+    <color name="black">#000000</color>
+    <color name="white">#F5F5F7</color>
+    <color name="grey">#202024</color>
+    <color name="light_grey">#161618</color>
+    <color name="smoke_white">#F5F5F7</color>
+    <color name="steel">#E2E4E8</color>
+
+    <!-- Nothing Signature Red Accent -->
+    <color name="red">#D71921</color>
+    <color name="mute_red">#D71921</color>
+    <color name="red_pressed">#B51219</color>
+    <color name="red_subtle">#26D71921</color>
+    <color name="yellow">#D71921</color>
+
+    <!-- Function Buttons (Stealth Industrial Grayscale) -->
+    <color name="blue">#222226</color>
+    <color name="sky_blue">#E2E4E8</color>
+
+    <!-- Subtitles and Dividers -->
+    <color name="settings_subtitle_light">#6B7280</color>
+    <color name="settings_subtitle_dark">#8E8E93</color>
+    <color name="settings_divider_light">#E5E7EB</color>
+    <color name="settings_divider_dark">#26262A</color>
 </resources>
