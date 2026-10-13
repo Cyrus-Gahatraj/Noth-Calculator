@@ -85,7 +85,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             else -> {
                 if (rawText == "±") {
                     toggleSign()
-                } else if (isResultShown && rawText.toIntOrNull() != null) {
+                } else if (isResultShown && (rawText.toIntOrNull() != null || resultView.text == "Error")) {
                     expression = buttonText
                 } else {
                     expression += buttonText
@@ -119,11 +119,11 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         val expObj = Expression(normalized)
         val result = expObj.calculate()
 
-        if (result.isNaN()) {
+        if (result.isNaN() || result.isInfinite()) {
             resultView.text = "Error"
         } else {
             var resultString = result.toString()
-            if (ceil(result) == floor(result)) {
+            if (ceil(result) == floor(result) && kotlin.math.abs(result) < 1e15) {
                 resultString = result.toLong().toString()
             }
             resultView.text = resultString
