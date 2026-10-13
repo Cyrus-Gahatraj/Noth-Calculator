@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     private var isResultShown = false
     private lateinit var expressionView: TextView
     private lateinit var resultView: TextView
+    private lateinit var expressionScrollView: HorizontalScrollView
+    private lateinit var resultScrollView: HorizontalScrollView
     private lateinit var settingBtn: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +36,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         val calcDisplay = findViewById<ConstraintLayout>(R.id.calcDisplay)
         expressionView = calcDisplay.findViewById(R.id.expressionView)
         resultView = calcDisplay.findViewById(R.id.resultView)
+        expressionScrollView = calcDisplay.findViewById(R.id.expressionScrollView)
+        resultScrollView = calcDisplay.findViewById(R.id.resultScrollView)
 
         gestureDetector = CalculatorGestureDetector(this, this)
 
@@ -52,10 +57,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         when (buttonText) {
             getString(R.string.all_clear) -> {
                 expression = ""
-                expressionView.text = ""
                 resultView.text = ""
-                resultView.visibility = View.GONE
-                isResultShown = false
+                updateExpressionDisplay()
             }
             getString(R.string.delete) -> {
                 if (expression.isNotEmpty()) {
@@ -66,10 +69,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
                     } else {
                         expression.dropLast(1)
                     }
-                    expressionView.text = expression
                 }
-                resultView.visibility = View.GONE
-                isResultShown = false
+                updateExpressionDisplay()
             }
             getString(R.string.equals) -> calculateResult()
 
@@ -79,27 +80,62 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
                 } else {
                     expression += getString(R.string.answer)
                 }
-                expressionView.text = expression
-                resultView.visibility = View.GONE
-                isResultShown = false
+                updateExpressionDisplay()
             }
 
             else -> {
                 if (rawText == "±") {
                     toggleSign()
-                } else if (isResultShown && (rawText.toIntOrNull() != null || resultView.text == "Error")) {
-                    expression = buttonText
                 } else {
-                    expression += buttonText
+                    if (isResultShown && (rawText.toIntOrNull() != null || resultView.text == "Error")) {
+                        expression = buttonText
+                    } else {
+                        expression += buttonText
+                    }
+                    updateExpressionDisplay()
                 }
-                expressionView.text = expression
-                resultView.visibility = View.GONE
-                isResultShown = false
             }
         }
+    }
 
-        if (!isResultShown) {
-            expressionView.textSize = getString(R.string.textSize).toFloat()
+    private fun updateExpressionDisplay() {
+        expressionView.text = expression
+        val len = expression.length
+        val size = when {
+            len <= 6 -> 54f
+            len <= 9 -> 46f
+            len <= 13 -> 38f
+            len <= 17 -> 32f
+            len <= 22 -> 26f
+            else -> 22f
+        }
+        expressionView.textSize = size
+        resultScrollView.visibility = View.GONE
+        isResultShown = false
+        expressionScrollView.post {
+            expressionScrollView.fullScroll(View.FOCUS_RIGHT)
+        }
+    }
+
+    private fun updateResultDisplay(resultString: String) {
+        resultView.text = resultString
+        val len = resultString.length
+        val size = when {
+            len <= 7 -> 44f
+            len <= 11 -> 36f
+            len <= 15 -> 30f
+            len <= 20 -> 24f
+            else -> 20f
+        }
+        resultView.textSize = size
+        expressionView.textSize = 24f
+        resultScrollView.visibility = View.VISIBLE
+        isResultShown = true
+        resultScrollView.post {
+            resultScrollView.fullScroll(View.FOCUS_RIGHT)
+        }
+        expressionScrollView.post {
+            expressionScrollView.fullScroll(View.FOCUS_RIGHT)
         }
     }
 
@@ -121,22 +157,19 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         val result = expObj.calculate()
 
         if (result.isNaN() || result.isInfinite()) {
-            resultView.text = "Error"
+            updateResultDisplay("Error")
         } else {
             var resultString = result.toString()
             if (ceil(result) == floor(result) && kotlin.math.abs(result) < 1e15) {
                 resultString = result.toLong().toString()
             }
-            resultView.text = resultString
+            val currentExp = expressionView.text.toString()
+            updateResultDisplay(resultString)
             expression = resultString
             lastAnswer = resultString
 
-            saveToDB(expressionView.text.toString(), resultString)
+            saveToDB(currentExp, resultString)
         }
-
-        resultView.visibility = View.VISIBLE
-        expressionView.textSize = 32.0f
-        isResultShown = true
     }
 
 
@@ -213,9 +246,12 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             }
         }
 
-        expressionView.text = expression
-        resultView.visibility = View.GONE
-        isResultShown = false
+        updateExpressionDisplay()
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.dispatchTouchEvent(event)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
