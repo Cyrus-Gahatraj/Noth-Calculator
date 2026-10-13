@@ -58,6 +58,7 @@ class History : AppCompatActivity() {
         clearButton.setOnClickListener {
             db.clearHistory()
             recyclerView.adapter = CalculationGroupAdapter(emptyList())
+            clearButton.visibility = View.GONE
         }
     }
 

@@ -53,7 +53,7 @@ class HistoryDataBaseHelper(context: Context?)
 
     fun getHistory(): ArrayList<CalculationHistory> {
         val list = ArrayList<CalculationHistory>()
-        val stringQuery = "SELECT * FROM $HISTORY"
+        val stringQuery = "SELECT * FROM $HISTORY ORDER BY $ID DESC"
         val db = readableDatabase
         val cursor: Cursor = db.rawQuery(stringQuery, null)
 

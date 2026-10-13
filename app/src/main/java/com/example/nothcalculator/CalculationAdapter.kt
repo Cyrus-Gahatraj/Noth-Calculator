@@ -31,7 +31,7 @@ class CalculationAdapter(private val listOfCalculation: MutableList<CalculationH
         val calculation = listOfCalculation[position]
 
         viewHolder.expression.text = calculation.expression
-        viewHolder.result.text = calculation.result
+        viewHolder.result.text = if (calculation.result.startsWith("=")) calculation.result else "= ${calculation.result}"
     }
 
     override fun getItemCount() = listOfCalculation.size
