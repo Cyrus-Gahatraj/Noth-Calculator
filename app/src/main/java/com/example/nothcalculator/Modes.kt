@@ -24,6 +24,7 @@ class Modes : AppCompatActivity() {
         default.setOnClickListener {
             val intent = Intent(this@Modes, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                putExtra("switched_mode", true)
             }
             startActivity(intent)
             finish()

@@ -17,6 +17,41 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun testScientificFunctions() {
+        assertEquals(4.0, Expression("sqrt(16)").calculate(), 0.0001)
+        assertEquals(Math.PI, Expression("pi").calculate(), 0.0001)
+        assertEquals(Math.E, Expression("e").calculate(), 0.0001)
+        assertEquals(120.0, Expression("5!").calculate(), 0.0001)
+        assertEquals(1.0, Expression("10#3").calculate(), 0.0001)
+
+        fun replaceExpr(expr: String, lastAnswer: String): String {
+            var res = expr.replace("mod", "#")
+            res = res.replace("Ans", lastAnswer)
+            res = res.replace("√", "sqrt(")
+            res = res.replace("π", "pi")
+            res = res.replace("×", "*")
+            return res
+        }
+
+        fun normalize(exp: String): String {
+            var s = exp
+            val opens = s.count { it == '(' }
+            val closes = s.count { it == ')' }
+            if (opens > closes) {
+                s += ")".repeat(opens - closes)
+            }
+            return s
+        }
+
+        assertEquals(4.0, Expression(normalize(replaceExpr("√16", "0"))).calculate(), 0.0001)
+        assertEquals(Math.PI, Expression(normalize(replaceExpr("π", "0"))).calculate(), 0.0001)
+        org.mariuszgromada.math.mxparser.mXparser.setDegreesMode()
+        assertEquals(1.0, Expression("sin(90)").calculate(), 0.0001)
+        org.mariuszgromada.math.mxparser.mXparser.setRadiansMode()
+        assertEquals(1.0, Expression("sin(pi/2)").calculate(), 0.0001)
+    }
+
+    @Test
     fun testParenthesesAutoClose() {
         fun normalizeExpression(exp: String): String {
             var s = exp
@@ -141,7 +176,7 @@ class ExampleUnitTest {
     @Test
     fun testTokenDeletion() {
         fun deleteLastToken(exp: String): String {
-            val tokens = listOf("sin(", "cos(", "tan(", "log10(", "ln(", "Ans")
+            val tokens = listOf("sin(", "cos(", "tan(", "log10(", "ln(", "sqrt(", "Ans")
             val matchingToken = tokens.firstOrNull { exp.endsWith(it) }
             return if (matchingToken != null) {
                 exp.dropLast(matchingToken.length)
@@ -153,6 +188,7 @@ class ExampleUnitTest {
         assertEquals("5+", deleteLastToken("5+sin("))
         assertEquals("5+", deleteLastToken("5+cos("))
         assertEquals("5+", deleteLastToken("5+log10("))
+        assertEquals("5+", deleteLastToken("5+sqrt("))
         assertEquals("5+", deleteLastToken("5+Ans"))
         assertEquals("5", deleteLastToken("53"))
     }

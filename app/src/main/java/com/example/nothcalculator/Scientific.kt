@@ -1,10 +1,16 @@
 package com.example.nothcalculator
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.TextView
@@ -12,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.button.MaterialButton
 import org.mariuszgromada.math.mxparser.Expression
+import org.mariuszgromada.math.mxparser.mXparser
 import kotlin.math.ceil
 import kotlin.math.floor
 
@@ -47,9 +54,24 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        if (settingsPrefs.getBoolean("screen_on", false)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     @SuppressLint("SetTextI18n")
     fun onButtonClick(view: View) {
         if (view !is MaterialButton) return
+
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        if (settingsPrefs.getBoolean("vibration", true)) {
+            vibrateClick()
+        }
 
         val rawText = view.text.toString()
         val buttonText = mapButtonToExpression(rawText)
@@ -62,7 +84,7 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             }
             getString(R.string.delete) -> {
                 if (expression.isNotEmpty()) {
-                    val tokens = listOf("sin(", "cos(", "tan(", "log10(", "ln(", getString(R.string.answer))
+                    val tokens = listOf("sin(", "cos(", "tan(", "log10(", "ln(", "sqrt(", getString(R.string.answer))
                     val matchingToken = tokens.firstOrNull { expression.endsWith(it) }
                     expression = if (matchingToken != null) {
                         expression.dropLast(matchingToken.length)
@@ -96,6 +118,24 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
                 }
             }
         }
+    }
+
+    private fun vibrateClick() {
+        try {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                vibratorManager?.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator?.vibrate(20L)
+            }
+        } catch (_: Exception) {}
     }
 
     private fun updateExpressionDisplay() {
@@ -152,6 +192,15 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         if (expression == ""){
             return
         }
+
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val angleUnit = settingsPrefs.getString("angle_unit", "DEG") ?: "DEG"
+        if (angleUnit == "DEG") {
+            mXparser.setDegreesMode()
+        } else {
+            mXparser.setRadiansMode()
+        }
+
         val normalized = normalizeExpression(expression)
         val expObj = Expression(normalized)
         val result = expObj.calculate()
@@ -182,6 +231,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             "ln" -> "ln("
             "x^y" -> "^"
             "x²" -> "^2"
+            "√" -> "sqrt("
+            "π" -> "pi"
             else -> text
         }
     }
@@ -189,6 +240,8 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     fun replace(expression: String): String {
         var newExpression = expression.replace("mod", "#")
         newExpression = newExpression.replace(getString(R.string.answer), lastAnswer)
+        newExpression = newExpression.replace("√", "sqrt(")
+        newExpression = newExpression.replace("π", "pi")
         return newExpression
     }
     private fun normalizeExpression(exp: String): String {

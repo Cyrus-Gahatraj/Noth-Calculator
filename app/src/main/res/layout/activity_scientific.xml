@@ -27,7 +27,9 @@
         android:alignmentMode="alignMargins"
         android:useDefaultMargins="true"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Row 1 -->
         <com.google.android.material.button.MaterialButton
@@ -126,21 +128,21 @@
 
         <!-- Row 4 -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn7"
+            android:id="@+id/btn1"
             style="@style/Button.Scientific.Digits"
-            android:text="7"
+            android:text="1"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn8"
+            android:id="@+id/btn2"
             style="@style/Button.Scientific.Digits"
-            android:text="8"
+            android:text="2"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn9"
+            android:id="@+id/btn3"
             style="@style/Button.Scientific.Digits"
-            android:text="9"
+            android:text="3"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
@@ -190,21 +192,21 @@
 
         <!-- Row 6 -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn1"
+            android:id="@+id/btn7"
             style="@style/Button.Scientific.Digits"
-            android:text="1"
+            android:text="7"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn2"
+            android:id="@+id/btn8"
             style="@style/Button.Scientific.Digits"
-            android:text="2"
+            android:text="8"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn3"
+            android:id="@+id/btn9"
             style="@style/Button.Scientific.Digits"
-            android:text="3"
+            android:text="9"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton
@@ -221,15 +223,15 @@
 
         <!-- Row 7 -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn0"
-            style="@style/Button.Scientific.Digits"
-            android:text="0"
-            android:onClick="onButtonClick" />
-
-        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDot"
             style="@style/Button.Scientific.Digits"
             android:text="."
+            android:onClick="onButtonClick" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn0"
+            style="@style/Button.Scientific.Digits"
+            android:text="0"
             android:onClick="onButtonClick" />
 
         <com.google.android.material.button.MaterialButton

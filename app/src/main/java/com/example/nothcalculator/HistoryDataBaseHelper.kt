@@ -81,4 +81,16 @@ class HistoryDataBaseHelper(context: Context?)
         db.close()
     }
 
+    fun getHistoryCount(): Int {
+        val db = readableDatabase
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM $HISTORY", null)
+        var count = 0
+        if (cursor.moveToFirst()) {
+            count = cursor.getInt(0)
+        }
+        cursor.close()
+        db.close()
+        return count
+    }
+
 }

@@ -1,10 +1,16 @@
 package com.example.nothcalculator
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.HorizontalScrollView
 import android.widget.ImageButton
 import android.widget.TextView
@@ -29,6 +35,15 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val startupMode = settingsPrefs.getString("startup_mode", "Default") ?: "Default"
+        if (startupMode == "Scientific" && savedInstanceState == null && intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER) && !intent.getBooleanExtra("switched_mode", false)) {
+            startActivity(Intent(this, Scientific::class.java))
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
 
         val calcDisplay = findViewById<ConstraintLayout>(R.id.calcDisplay)
@@ -47,8 +62,23 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        if (settingsPrefs.getBoolean("screen_on", false)) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+
     fun onButtonClick(view: View) {
         if (view is MaterialButton) {
+            val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+            if (settingsPrefs.getBoolean("vibration", true)) {
+                vibrateClick()
+            }
+
             val buttonText = view.text.toString()
 
             when (buttonText) {
@@ -91,6 +121,24 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
                 }
             }
         }
+    }
+
+    private fun vibrateClick() {
+        try {
+            val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                val vibratorManager = getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
+                vibratorManager?.defaultVibrator
+            } else {
+                @Suppress("DEPRECATION")
+                getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                vibrator?.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+            } else {
+                @Suppress("DEPRECATION")
+                vibrator?.vibrate(20L)
+            }
+        } catch (_: Exception) {}
     }
 
     private fun updateExpressionDisplay() {
