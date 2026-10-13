@@ -51,7 +51,7 @@ class CalculatorGestureDetector(context: Context, private val listener: Calculat
         val valueY: Float = y2 - y1
 
         if (abs(valueY) > abs(valueX)) {
-            if (valueY > MIN_DISTANT) {
+            if (abs(valueY) > MIN_DISTANT) {
                 listener.onSwipeDown()
             }
         } else {

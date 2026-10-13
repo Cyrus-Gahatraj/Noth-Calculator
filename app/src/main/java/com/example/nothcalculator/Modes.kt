@@ -22,16 +22,20 @@ class Modes : AppCompatActivity() {
 
         default = findViewById(R.id.defaultCalc)
         default.setOnClickListener {
-            Intent(this@Modes, MainActivity::class.java).also{
-                startActivity(it)
+            val intent = Intent(this@Modes, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
+            startActivity(intent)
+            finish()
         }
 
         scientific = findViewById(R.id.scientificCalc)
         scientific.setOnClickListener {
-            Intent(this@Modes, Scientific::class.java).also{
-                startActivity(it)
+            val intent = Intent(this@Modes, Scientific::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
+            startActivity(intent)
+            finish()
         }
     }
 }

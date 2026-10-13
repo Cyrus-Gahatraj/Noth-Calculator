@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.jakewharton.threetenabp.AndroidThreeTen
+import org.mariuszgromada.math.mxparser.License
 
 class NothCalculatorApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        License.iConfirmNonCommercialUse("Noth Calculator")
         AndroidThreeTen.init(this) 
         applySavedTheme()
     }

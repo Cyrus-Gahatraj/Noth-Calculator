@@ -59,7 +59,13 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
             }
             getString(R.string.delete) -> {
                 if (expression.isNotEmpty()) {
-                    expression = expression.dropLast(1)
+                    val tokens = listOf("sin(", "cos(", "tan(", "log10(", "ln(", getString(R.string.answer))
+                    val matchingToken = tokens.firstOrNull { expression.endsWith(it) }
+                    expression = if (matchingToken != null) {
+                        expression.dropLast(matchingToken.length)
+                    } else {
+                        expression.dropLast(1)
+                    }
                     expressionView.text = expression
                 }
                 resultView.visibility = View.GONE
