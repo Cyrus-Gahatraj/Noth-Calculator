@@ -1,7 +1,8 @@
+package com.example.nothcalculator
+
 import android.content.Context
 import android.view.GestureDetector
 import android.view.MotionEvent
-import com.example.nothcalculator.CalculatorGestureListener
 import kotlin.math.abs
 
 class CalculatorGestureDetector(context: Context, private val listener: CalculatorGestureListener) :
