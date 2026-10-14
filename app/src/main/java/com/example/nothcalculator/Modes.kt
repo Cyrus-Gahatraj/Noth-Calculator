@@ -13,6 +13,8 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
 
     private lateinit var defaultCard: MaterialCardView
     private lateinit var scientificCard: MaterialCardView
+    private lateinit var emiCard: MaterialCardView
+    private lateinit var graphCard: MaterialCardView
     private lateinit var gestureDetector: CalculatorGestureDetector
 
     @SuppressLint("MissingInflatedId")
@@ -29,13 +31,13 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
         val currentMode = intent.getStringExtra("current_mode") ?: "Default"
         val dotDefault = findViewById<View>(R.id.dotActiveDefault)
         val dotScientific = findViewById<View>(R.id.dotActiveScientific)
-        if (currentMode == "Default") {
-            dotDefault.visibility = View.VISIBLE
-            dotScientific.visibility = View.GONE
-        } else {
-            dotDefault.visibility = View.GONE
-            dotScientific.visibility = View.VISIBLE
-        }
+        val dotEmi = findViewById<View>(R.id.dotActiveEmi)
+        val dotGraph = findViewById<View>(R.id.dotActiveGraph)
+
+        dotDefault.visibility = if (currentMode.equals("Default", ignoreCase = true)) View.VISIBLE else View.GONE
+        dotScientific.visibility = if (currentMode.equals("Scientific", ignoreCase = true)) View.VISIBLE else View.GONE
+        dotEmi.visibility = if (currentMode.equals("EMI", ignoreCase = true)) View.VISIBLE else View.GONE
+        dotGraph.visibility = if (currentMode.equals("Graph", ignoreCase = true)) View.VISIBLE else View.GONE
 
         defaultCard = findViewById(R.id.defaultCalc)
         defaultCard.setOnClickListener {
@@ -52,6 +54,26 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
         scientificCard.setOnClickListener {
             vibrateTap(it)
             val intent = Intent(this@Modes, Scientific::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            startActivity(intent)
+            finish()
+        }
+
+        emiCard = findViewById(R.id.emiCalc)
+        emiCard.setOnClickListener {
+            vibrateTap(it)
+            val intent = Intent(this@Modes, EmiCalculator::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            startActivity(intent)
+            finish()
+        }
+
+        graphCard = findViewById(R.id.graphCalc)
+        graphCard.setOnClickListener {
+            vibrateTap(it)
+            val intent = Intent(this@Modes, GraphCalculator::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
             startActivity(intent)
@@ -84,6 +106,5 @@ class Modes : AppCompatActivity(), CalculatorGestureListener {
         finish()
     }
 
-    override fun onSwipeDown() {
-    }
+    override fun onSwipeDown() {}
 }

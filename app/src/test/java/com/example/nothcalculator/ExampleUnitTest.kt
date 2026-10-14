@@ -192,4 +192,93 @@ class ExampleUnitTest {
         assertEquals("5+", deleteLastToken("5+Ans"))
         assertEquals("5", deleteLastToken("53"))
     }
+
+    @Test
+    fun testEmiCalculation() {
+        fun computeEmi(principal: Double, annualRate: Double, totalMonths: Double): Triple<Double, Double, Double> {
+            if (principal <= 0 || totalMonths <= 0) {
+                return Triple(0.0, 0.0, 0.0)
+            }
+            val monthlyRate = (annualRate / 12.0) / 100.0
+            val emi: Double
+            val totalPayment: Double
+            val totalInterest: Double
+
+            if (monthlyRate == 0.0) {
+                emi = principal / totalMonths
+                totalPayment = principal
+                totalInterest = 0.0
+            } else {
+                val factor = Math.pow(1.0 + monthlyRate, totalMonths)
+                emi = (principal * monthlyRate * factor) / (factor - 1.0)
+                totalPayment = emi * totalMonths
+                totalInterest = (totalPayment - principal).coerceAtLeast(0.0)
+            }
+            return Triple(emi, totalInterest, totalPayment)
+        }
+
+        // Test Standard Loan: $100,000 at 8.5% for 5 years (60 months)
+        val (emi1, interest1, total1) = computeEmi(100000.0, 8.5, 60.0)
+        assertEquals(2051.65, emi1, 0.01)
+        assertEquals(23099.18, interest1, 0.02)
+        assertEquals(123099.18, total1, 0.02)
+
+        // Test Zero Interest Loan: $12,000 at 0% for 12 months
+        val (emi2, interest2, total2) = computeEmi(12000.0, 0.0, 12.0)
+        assertEquals(1000.0, emi2, 0.001)
+        assertEquals(0.0, interest2, 0.001)
+        assertEquals(12000.0, total2, 0.001)
+
+        // Test Edge Cases (0 principal or 0 tenure)
+        val (emi3, interest3, total3) = computeEmi(0.0, 8.5, 60.0)
+        assertEquals(0.0, emi3, 0.0)
+        assertEquals(0.0, interest3, 0.0)
+        assertEquals(0.0, total3, 0.0)
+    }
+
+    @Test
+    fun testGraphFunctionEvaluation() {
+        fun normalizeFormula(fn: String): String {
+            var s = fn.replace("×", "*")
+                .replace("÷", "/")
+                .replace("π", "pi")
+                .replace("e^x", "exp(x)")
+                .replace("√", "sqrt")
+
+            val opens = s.count { it == '(' }
+            val closes = s.count { it == ')' }
+            if (opens > closes) {
+                s += ")".repeat(opens - closes)
+            }
+            return s
+        }
+
+        fun evalAt(formula: String, xVal: Double): Double {
+            val normalized = normalizeFormula(formula)
+            val xArg = org.mariuszgromada.math.mxparser.Argument("x = $xVal")
+            val expr = org.mariuszgromada.math.mxparser.Expression(normalized, xArg)
+            assertTrue("Formula '$formula' should have valid syntax", expr.checkSyntax())
+            return expr.calculate()
+        }
+
+        // Trigonometric in radians mode
+        org.mariuszgromada.math.mxparser.mXparser.setRadiansMode()
+        assertEquals(0.0, evalAt("sin(x)", 0.0), 0.0001)
+        assertEquals(1.0, evalAt("sin(x)", Math.PI / 2.0), 0.0001)
+        assertEquals(1.0, evalAt("cos(x)", 0.0), 0.0001)
+        assertEquals(-1.0, evalAt("cos(x)", Math.PI), 0.0001)
+
+        // Polynomials
+        assertEquals(9.0, evalAt("x^2", 3.0), 0.0001)
+        assertEquals(2.0, evalAt("x^3 - 3*x", 2.0), 0.0001)
+
+        // Square root and inverse
+        assertEquals(4.0, evalAt("sqrt(x)", 16.0), 0.0001)
+        assertEquals(0.5, evalAt("1/x", 2.0), 0.0001)
+        assertEquals(Math.E, evalAt("exp(x)", 1.0), 0.0001)
+        assertEquals(5.0, evalAt("abs(x)", -5.0), 0.0001)
+
+        // Auto-closing parenthesis
+        assertEquals(16.0, evalAt("(x+2)^2", 2.0), 0.0001)
+    }
 }

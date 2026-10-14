@@ -128,16 +128,28 @@ class Settings : AppCompatActivity() {
             Toast.makeText(this, "Angle unit set to $currentAngleUnit", Toast.LENGTH_SHORT).show()
         }
 
-        // --- Startup Mode (Default / Scientific) ---
+        // --- Startup Mode (Default / Scientific / EMI / Graph) ---
         startupModeText = findViewById(R.id.startupModeText)
         var currentStartupMode = settingsPrefs.getString("startup_mode", "Default") ?: "Default"
         startupModeText.text = currentStartupMode
 
+        val modeDisplayNames = arrayOf("Default (Standard)", "Scientific", "EMI Calculator", "Graphing Calculator")
+        val modeKeyValues = arrayOf("Default", "Scientific", "EMI", "Graph")
+
         findViewById<View>(R.id.rowStartupMode).setOnClickListener {
-            currentStartupMode = if (currentStartupMode == "Default") "Scientific" else "Default"
-            settingsEditor.putString("startup_mode", currentStartupMode).apply()
-            startupModeText.text = currentStartupMode
-            Toast.makeText(this, "Startup mode set to $currentStartupMode", Toast.LENGTH_SHORT).show()
+            val currentIndex = modeKeyValues.indexOf(currentStartupMode).let { if (it >= 0) it else 0 }
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Startup Mode")
+                .setSingleChoiceItems(modeDisplayNames, currentIndex) { dialog, which ->
+                    val chosen = modeKeyValues[which]
+                    currentStartupMode = chosen
+                    settingsEditor.putString("startup_mode", chosen).apply()
+                    startupModeText.text = chosen
+                    Toast.makeText(this, "Startup mode set to $chosen", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
 
         // --- Clear History ---
@@ -168,7 +180,7 @@ class Settings : AppCompatActivity() {
         val versionName = try {
             packageManager.getPackageInfo(packageName, 0).versionName
         } catch (_: Exception) {
-            "0.4.5"
+            "0.4.8"
         }
         versionSubtitle.text = "Version $versionName • Nothing OS aesthetic"
 

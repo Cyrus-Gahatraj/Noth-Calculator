@@ -141,7 +141,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
                         android:fontFamily="@font/noto_sans"
-                        android:text="Switch modes (Default &amp; Scientific)"
+                        android:text="Switch modes (Default, Scientific, EMI, Graph)"
                         android:textColor="@color/settings_subtitle_dark"
                         android:textSize="12sp" />
                 </LinearLayout>

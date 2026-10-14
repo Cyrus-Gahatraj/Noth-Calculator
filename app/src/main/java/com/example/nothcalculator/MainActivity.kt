@@ -55,10 +55,24 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
             return
         }
         val startupMode = settingsPrefs.getString("startup_mode", "Default") ?: "Default"
-        if (startupMode == "Scientific" && savedInstanceState == null && intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER) && !intent.getBooleanExtra("switched_mode", false)) {
-            startActivity(Intent(this, Scientific::class.java))
-            finish()
-            return
+        if (savedInstanceState == null && intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER) && !intent.getBooleanExtra("switched_mode", false)) {
+            when (startupMode) {
+                "Scientific" -> {
+                    startActivity(Intent(this, Scientific::class.java))
+                    finish()
+                    return
+                }
+                "EMI" -> {
+                    startActivity(Intent(this, EmiCalculator::class.java))
+                    finish()
+                    return
+                }
+                "Graph" -> {
+                    startActivity(Intent(this, GraphCalculator::class.java))
+                    finish()
+                    return
+                }
+            }
         }
 
         setContentView(R.layout.activity_main)
