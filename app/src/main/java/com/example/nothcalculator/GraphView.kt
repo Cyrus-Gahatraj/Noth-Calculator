@@ -18,9 +18,16 @@ import org.mariuszgromada.math.mxparser.Argument
 import org.mariuszgromada.math.mxparser.Expression
 import java.text.DecimalFormat
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
+
+data class GraphItem(
+    val id: String,
+    var formula: String,
+    var color: Int,
+    var isVisible: Boolean = true,
+    var parsedExpression: Expression? = null,
+    var isValid: Boolean = true,
+    var xArg: Argument = Argument("x = 0")
+)
 
 class GraphView @JvmOverloads constructor(
     context: Context,
@@ -38,16 +45,11 @@ class GraphView @JvmOverloads constructor(
     var yMax = 10.0f
         private set
 
-    private var formula: String = "sin(x)"
-    private var normalizedFormula: String = "sin(x)"
-    private var xArg = Argument("x = 0")
-    private var parsedExpression: Expression? = null
-    var isFunctionValid: Boolean = true
-        private set
+    // Multi-graph collection
+    private val graphItems = mutableListOf<GraphItem>()
 
     // Touch inspection point (mathematical coordinates)
     private var inspectX: Float? = null
-    private var inspectY: Float? = null
     private var isInspecting: Boolean = false
 
     // Pan tracking
@@ -81,7 +83,6 @@ class GraphView @JvmOverloads constructor(
         val axisColor = if (isDark) 0xFF6B7280.toInt() else 0xFF9CA3AF.toInt()
         val gridColor = if (isDark) 0xFF2A2A2E.toInt() else 0xFFE5E7EB.toInt()
         val textColor = if (isDark) 0xFF9CA3AF.toInt() else 0xFF6B7280.toInt()
-        val redColor = ContextCompat.getColor(context, R.color.red)
 
         axisPaint.apply {
             color = axisColor
@@ -103,7 +104,6 @@ class GraphView @JvmOverloads constructor(
         }
 
         curvePaint.apply {
-            color = redColor
             strokeWidth = dpToPx(3.2f)
             style = Paint.Style.STROKE
             strokeCap = Paint.Cap.ROUND
@@ -111,24 +111,22 @@ class GraphView @JvmOverloads constructor(
         }
 
         crosshairPaint.apply {
-            color = if (isDark) 0x88FFFFFF.toInt() else 0x88000000.toInt()
+            color = if (isDark) 0x66FFFFFF.toInt() else 0x66000000.toInt()
             strokeWidth = dpToPx(1f)
             style = Paint.Style.STROKE
             pathEffect = DashPathEffect(floatArrayOf(dpToPx(4f), dpToPx(4f)), 0f)
         }
 
         cursorOuterPaint.apply {
-            color = ContextCompat.getColor(context, R.color.red_subtle)
             style = Paint.Style.FILL
         }
 
         cursorInnerPaint.apply {
-            color = redColor
             style = Paint.Style.FILL
         }
 
         hudBgPaint.apply {
-            color = if (isDark) 0xE6232326.toInt() else 0xF0FFFFFF.toInt()
+            color = if (isDark) 0xEE232326.toInt() else 0xF5FFFFFF.toInt()
             style = Paint.Style.FILL
         }
 
@@ -140,7 +138,7 @@ class GraphView @JvmOverloads constructor(
 
         hudTextPaint.apply {
             color = if (isDark) 0xFFFFFFFF.toInt() else 0xFF18181B.toInt()
-            textSize = dpToPx(12f)
+            textSize = dpToPx(11f)
             typeface = ndotTypeface
         }
 
@@ -154,25 +152,49 @@ class GraphView @JvmOverloads constructor(
                 return false
             }
         })
-
-        setFunction("sin(x)")
     }
 
-    fun setFunction(newFormula: String) {
-        formula = newFormula.trim()
-        normalizedFormula = normalizeFormula(formula)
-        try {
-            xArg = Argument("x = 0")
-            val expr = Expression(normalizedFormula, xArg)
-            isFunctionValid = expr.checkSyntax()
-            parsedExpression = if (isFunctionValid) expr else null
-        } catch (_: Exception) {
-            isFunctionValid = false
-            parsedExpression = null
+    fun setGraphs(items: List<GraphItem>) {
+        graphItems.clear()
+        for (item in items) {
+            compileGraph(item)
+            graphItems.add(item)
         }
         inspectX = null
-        inspectY = null
         invalidate()
+    }
+
+    fun updateGraph(id: String, formula: String) {
+        val item = graphItems.find { it.id == id } ?: return
+        item.formula = formula
+        compileGraph(item)
+        invalidate()
+    }
+
+    fun toggleGraphVisibility(id: String): Boolean {
+        val item = graphItems.find { it.id == id } ?: return false
+        item.isVisible = !item.isVisible
+        invalidate()
+        return item.isVisible
+    }
+
+    private fun compileGraph(item: GraphItem) {
+        val clean = item.formula.trim()
+        if (clean.isEmpty()) {
+            item.isValid = false
+            item.parsedExpression = null
+            return
+        }
+        val normalized = normalizeFormula(clean)
+        try {
+            item.xArg = Argument("x = 0")
+            val expr = Expression(normalized, item.xArg)
+            item.isValid = expr.checkSyntax()
+            item.parsedExpression = if (item.isValid) expr else null
+        } catch (_: Exception) {
+            item.isValid = false
+            item.parsedExpression = null
+        }
     }
 
     private fun normalizeFormula(fn: String): String {
@@ -182,7 +204,6 @@ class GraphView @JvmOverloads constructor(
             .replace("e^x", "exp(x)")
             .replace("√", "sqrt")
 
-        // Auto close open parentheses
         val opens = s.count { it == '(' }
         val closes = s.count { it == ')' }
         if (opens > closes) {
@@ -264,8 +285,12 @@ class GraphView @JvmOverloads constructor(
         // 1. Draw Grid Lines & Numbers
         drawGridAndAxes(canvas)
 
-        // 2. Draw Function Curve
-        drawFunctionCurve(canvas)
+        // 2. Draw All Active Function Curves
+        for (item in graphItems) {
+            if (item.isVisible && item.isValid && item.parsedExpression != null) {
+                drawSingleCurve(canvas, item)
+            }
+        }
 
         // 3. Draw Inspection Indicator & HUD
         drawInspection(canvas)
@@ -325,20 +350,20 @@ class GraphView @JvmOverloads constructor(
         }
     }
 
-    private fun drawFunctionCurve(canvas: Canvas) {
-        val expr = parsedExpression ?: return
-        if (!isFunctionValid) return
-
+    private fun drawSingleCurve(canvas: Canvas, item: GraphItem) {
+        val expr = item.parsedExpression ?: return
+        curvePaint.color = item.color
         curvePath.reset()
+
         val w = width
-        val stepPixels = 3 // sample every 3 pixels for snappy 60fps rendering
+        val stepPixels = 3
         var isPathStarted = false
         var prevMathY = 0.0
         val yRange = (yMax - yMin).toDouble()
 
         for (px in 0..w step stepPixels) {
             val mx = screenToMathX(px.toFloat()).toDouble()
-            xArg.setArgumentValue(mx)
+            item.xArg.setArgumentValue(mx)
             val my = expr.calculate()
 
             if (my.isNaN() || my.isInfinite()) {
@@ -352,7 +377,6 @@ class GraphView @JvmOverloads constructor(
             if (isPathStarted) {
                 val diff = abs(my - prevMathY)
                 if (diff > yRange * 1.5 && (my * prevMathY < 0)) {
-                    // Jump across asymptote: start new path segment
                     curvePath.moveTo(px.toFloat(), sy)
                     prevMathY = my
                     continue
@@ -373,38 +397,55 @@ class GraphView @JvmOverloads constructor(
 
     private fun drawInspection(canvas: Canvas) {
         val ix = inspectX ?: return
-        val iy = inspectY ?: return
 
         val sx = mathToScreenX(ix)
-        val sy = mathToScreenY(iy)
+        val hudItems = mutableListOf<String>()
 
-        // Draw crosshair dashed lines
-        val axisY = mathToScreenY(0f).coerceIn(0f, height.toFloat())
-        val axisX = mathToScreenX(0f).coerceIn(0f, width.toFloat())
+        // Draw vertical crosshair
+        canvas.drawLine(sx, 0f, sx, height.toFloat(), crosshairPaint)
 
-        canvas.drawLine(sx, sy, sx, axisY, crosshairPaint)
-        canvas.drawLine(sx, sy, axisX, sy, crosshairPaint)
+        // Draw indicator dots on each visible curve
+        var index = 1
+        for (item in graphItems) {
+            if (item.isVisible && item.isValid && item.parsedExpression != null) {
+                item.xArg.setArgumentValue(ix.toDouble())
+                val my = item.parsedExpression!!.calculate()
 
-        // Draw cursor dot on curve
-        canvas.drawCircle(sx, sy, dpToPx(12f), cursorOuterPaint)
-        canvas.drawCircle(sx, sy, dpToPx(5f), cursorInnerPaint)
+                if (!my.isNaN() && !my.isInfinite()) {
+                    val sy = mathToScreenY(my.toFloat())
 
-        // Draw HUD card
-        val hudText = "x: ${hudFormat.format(ix)}   y: ${hudFormat.format(iy)}"
+                    // Horizontal crosshair to Y axis
+                    canvas.drawLine(0f, sy, width.toFloat(), sy, crosshairPaint)
+
+                    // Dot with curve's specific color
+                    cursorOuterPaint.color = (item.color and 0x00FFFFFF) or 0x33000000
+                    canvas.drawCircle(sx, sy, dpToPx(11f), cursorOuterPaint)
+
+                    cursorInnerPaint.color = item.color
+                    canvas.drawCircle(sx, sy, dpToPx(5f), cursorInnerPaint)
+
+                    hudItems.add("y$index: ${hudFormat.format(my)}")
+                }
+            }
+            index++
+        }
+
+        if (hudItems.isEmpty()) return
+
+        // Build HUD string: "x: 2.00 | y1: 0.91 | y2: 4.00"
+        val hudText = "x: ${hudFormat.format(ix)}  " + hudItems.joinToString("  ")
         val textWidth = hudTextPaint.measureText(hudText)
-        val paddingH = dpToPx(14f)
-        val paddingV = dpToPx(8f)
+        val paddingH = dpToPx(12f)
         val hudW = textWidth + paddingH * 2
-        val hudH = dpToPx(32f)
+        val hudH = dpToPx(30f)
 
-        // Position HUD comfortably at the top center
         val hudLeft = (width - hudW) / 2f
-        val hudTop = dpToPx(12f)
+        val hudTop = dpToPx(10f)
         val hudRect = RectF(hudLeft, hudTop, hudLeft + hudW, hudTop + hudH)
 
         canvas.drawRoundRect(hudRect, dpToPx(8f), dpToPx(8f), hudBgPaint)
         canvas.drawRoundRect(hudRect, dpToPx(8f), dpToPx(8f), hudStrokePaint)
-        canvas.drawText(hudText, hudLeft + paddingH, hudTop + dpToPx(20f), hudTextPaint)
+        canvas.drawText(hudText, hudLeft + paddingH, hudTop + dpToPx(19f), hudTextPaint)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -455,19 +496,9 @@ class GraphView @JvmOverloads constructor(
     }
 
     private fun updateInspection(touchX: Float) {
-        val expr = parsedExpression ?: return
-        if (!isFunctionValid) return
-
-        val mx = screenToMathX(touchX)
-        xArg.setArgumentValue(mx.toDouble())
-        val my = expr.calculate()
-
-        if (!my.isNaN() && !my.isInfinite()) {
-            inspectX = mx
-            inspectY = my.toFloat()
-            isInspecting = true
-            invalidate()
-        }
+        inspectX = screenToMathX(touchX)
+        isInspecting = true
+        invalidate()
     }
 
     private fun dpToPx(dp: Float): Float = dp * resources.displayMetrics.density

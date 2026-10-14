@@ -1,24 +1,43 @@
 package com.example.nothcalculator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
+import java.util.UUID
 
 class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
 
     private lateinit var graphView: GraphView
-    private lateinit var etFunction: EditText
+    private lateinit var functionsContainer: LinearLayout
+    private lateinit var btnAddFunction: MaterialButton
     private lateinit var gestureDetector: CalculatorGestureDetector
+
+    private val graphsList = mutableListOf<GraphItem>()
+    private val colorPalette = intArrayOf(
+        0xFFD71921.toInt(), // Nothing Red
+        0xFFF8D332.toInt(), // Nothing Yellow
+        0xFF38BDF8.toInt(), // Sky Blue
+        0xFFA78BFA.toInt(), // Purple
+        0xFFE2E4E8.toInt()  // Steel White
+    )
+
+    private val subscripts = arrayOf("₁", "₂", "₃", "₄", "₅")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,42 +50,40 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
         header.setBackButton { finish() }
 
         graphView = findViewById(R.id.graphView)
-        etFunction = findViewById(R.id.etFunction)
+        functionsContainer = findViewById(R.id.functionsContainer)
+        btnAddFunction = findViewById(R.id.btnAddFunction)
 
-        etFunction.setText("sin(x)")
-        graphView.setFunction("sin(x)")
+        // Initial default function: y1 = sin(x)
+        val initialItem = GraphItem(
+            id = UUID.randomUUID().toString(),
+            formula = "sin(x)",
+            color = colorPalette[0]
+        )
+        graphsList.add(initialItem)
+        graphView.setGraphs(graphsList)
 
-        etFunction.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                plotCurrentFunction()
-                true
-            } else {
-                false
+        renderFunctionViews()
+
+        btnAddFunction.setOnClickListener {
+            vibrateTap(it)
+            if (graphsList.size >= 5) {
+                Toast.makeText(this, "Maximum 5 graphs supported", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            val nextColor = colorPalette[graphsList.size % colorPalette.size]
+            val defaultFormulas = arrayOf("cos(x)", "x^2", "x^3 - 3*x", "1/x")
+            val nextFormula = defaultFormulas.getOrElse(graphsList.size - 1) { "x" }
+            val newItem = GraphItem(
+                id = UUID.randomUUID().toString(),
+                formula = nextFormula,
+                color = nextColor
+            )
+            graphsList.add(newItem)
+            graphView.setGraphs(graphsList)
+            renderFunctionViews()
         }
 
-        findViewById<View>(R.id.btnClearFunction).setOnClickListener {
-            vibrateTap(it)
-            etFunction.setText("")
-        }
-
-        findViewById<MaterialButton>(R.id.btnPlot).setOnClickListener {
-            vibrateTap(it)
-            plotCurrentFunction()
-        }
-
-        // Quick Function Preset Chips
-        setupPresetChip(R.id.chipSin, "sin(x)")
-        setupPresetChip(R.id.chipCos, "cos(x)")
-        setupPresetChip(R.id.chipTan, "tan(x)")
-        setupPresetChip(R.id.chipSquare, "x^2")
-        setupPresetChip(R.id.chipCubic, "x^3 - 3*x")
-        setupPresetChip(R.id.chipSqrt, "sqrt(x)")
-        setupPresetChip(R.id.chipInverse, "1/x")
-        setupPresetChip(R.id.chipExp, "exp(x)")
-        setupPresetChip(R.id.chipAbs, "abs(x)")
-
-        // Zoom Controls
+        // Floating Zoom Controls on Top Canvas
         findViewById<MaterialButton>(R.id.btnZoomIn).setOnClickListener {
             vibrateTap(it)
             graphView.zoomIn()
@@ -83,25 +100,79 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
         }
     }
 
-    private fun setupPresetChip(chipId: Int, formula: String) {
-        findViewById<MaterialButton>(chipId).setOnClickListener {
-            vibrateTap(it)
-            etFunction.setText(formula)
-            graphView.setFunction(formula)
-            hideKeyboard()
-        }
-    }
+    @SuppressLint("SetTextI18n")
+    private fun renderFunctionViews() {
+        functionsContainer.removeAllViews()
+        val inflater = LayoutInflater.from(this)
 
-    private fun plotCurrentFunction() {
-        hideKeyboard()
-        val text = etFunction.text.toString().trim()
-        if (text.isEmpty()) {
-            Toast.makeText(this, "Please enter a function of x", Toast.LENGTH_SHORT).show()
-            return
-        }
-        graphView.setFunction(text)
-        if (!graphView.isFunctionValid) {
-            Toast.makeText(this, "Invalid function syntax", Toast.LENGTH_SHORT).show()
+        graphsList.forEachIndexed { index, item ->
+            val rowView = inflater.inflate(R.layout.item_graph_function, functionsContainer, false)
+
+            val tvTag = rowView.findViewById<TextView>(R.id.tvFunctionTag)
+            val etFormula = rowView.findViewById<EditText>(R.id.etFunctionFormula)
+            val btnClear = rowView.findViewById<TextView>(R.id.btnClearText)
+            val btnDelete = rowView.findViewById<TextView>(R.id.btnDeleteFunction)
+
+            val sub = subscripts.getOrElse(index) { "${index + 1}" }
+            tvTag.text = "y$sub"
+
+            // Tag background with curve color
+            val tagBg = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 14f * resources.displayMetrics.density
+                setColor(item.color)
+            }
+            tvTag.background = tagBg
+            tvTag.alpha = if (item.isVisible) 1.0f else 0.35f
+
+            // Toggle visibility on tag tap
+            tvTag.setOnClickListener {
+                vibrateTap(it)
+                val isVisible = graphView.toggleGraphVisibility(item.id)
+                item.isVisible = isVisible
+                tvTag.alpha = if (isVisible) 1.0f else 0.35f
+            }
+
+            etFormula.setText(item.formula)
+
+            etFormula.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    val formula = s?.toString() ?: ""
+                    item.formula = formula
+                    graphView.updateGraph(item.id, formula)
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            etFormula.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    hideKeyboard()
+                    true
+                } else {
+                    false
+                }
+            }
+
+            btnClear.setOnClickListener {
+                vibrateTap(it)
+                etFormula.setText("")
+            }
+
+            // Only allow deleting if more than 1 function exists
+            if (graphsList.size > 1) {
+                btnDelete.visibility = View.VISIBLE
+                btnDelete.setOnClickListener {
+                    vibrateTap(it)
+                    graphsList.removeAt(index)
+                    graphView.setGraphs(graphsList)
+                    renderFunctionViews()
+                }
+            } else {
+                btnDelete.visibility = View.GONE
+            }
+
+            functionsContainer.addView(rowView)
         }
     }
 
@@ -120,7 +191,7 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
-        // If event is outside graphView, allow gestureDetector to catch swipes
+        // Allow gesture navigation when touch is outside graph canvas
         val graphCoords = IntArray(2)
         graphView.getLocationOnScreen(graphCoords)
         val x = event.rawX

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/SettingsCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="8dp">
+
+        <!-- Color Tag / Function Index (e.g. y1) -->
+        <TextView
+            android:id="@+id/tvFunctionTag"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_segmented_active"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/ndot"
+            android:gravity="center"
+            android:text="y₁"
+            android:textColor="@color/full_white"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="6dp"
+            android:fontFamily="@font/ndot"
+            android:text="="
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="20sp" />
+
+        <EditText
+            android:id="@+id/etFunctionFormula"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:fontFamily="@font/ndot"
+            android:hint="sin(x)"
+            android:imeOptions="actionDone"
+            android:importantForAutofill="no"
+            android:inputType="textNoSuggestions"
+            android:maxLines="1"
+            android:paddingVertical="8dp"
+            android:singleLine="true"
+            android:textColor="?attr/colorOnSurface"
+            android:textColorHint="@color/settings_subtitle_dark"
+            android:textSize="18sp" />
+
+        <!-- Clear Text Button -->
+        <TextView
+            android:id="@+id/btnClearText"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/ndot"
+            android:gravity="center"
+            android:text="c"
+            android:textColor="@color/settings_subtitle_dark"
+            android:textSize="14sp" />
+
+        <!-- Delete Function Button -->
+        <TextView
+            android:id="@+id/btnDeleteFunction"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/ndot"
+            android:gravity="center"
+            android:text="✕"
+            android:textColor="@color/red"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
