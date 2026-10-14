@@ -172,6 +172,14 @@ class Settings : AppCompatActivity() {
         }
         versionSubtitle.text = "Version $versionName • Nothing OS aesthetic"
 
+        // --- Welcome Guide Row ---
+        findViewById<View>(R.id.rowOnboarding).setOnClickListener {
+            val intent = Intent(this, OnboardingActivity::class.java).apply {
+                putExtra("from_settings", true)
+            }
+            startActivity(intent)
+        }
+
         // --- GitHub Row ---
         findViewById<View>(R.id.rowGithub).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Cyrus-Gahatraj/Noth-Calculator"))

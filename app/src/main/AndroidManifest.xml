@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NothCalculator">
         <activity
+            android:name=".OnboardingActivity"
+            android:exported="false" />
+        <activity
             android:name=".Scientific"
             android:exported="false" />
         <activity

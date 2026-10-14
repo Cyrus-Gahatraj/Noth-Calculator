@@ -49,6 +49,11 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         super.onCreate(savedInstanceState)
 
         val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        if (!settingsPrefs.getBoolean("onboarding_completed", false) && savedInstanceState == null && intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+            startActivity(Intent(this, OnboardingActivity::class.java))
+            finish()
+            return
+        }
         val startupMode = settingsPrefs.getString("startup_mode", "Default") ?: "Default"
         if (startupMode == "Scientific" && savedInstanceState == null && intent.action == Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER) && !intent.getBooleanExtra("switched_mode", false)) {
             startActivity(Intent(this, Scientific::class.java))
