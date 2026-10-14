@@ -11,8 +11,8 @@ android {
         applicationId = "com.example.nothcalculator"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = "0.4.8"
+        versionCode = 9
+        versionName = "0.4.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
