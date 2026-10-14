@@ -27,7 +27,6 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
     private lateinit var btnTenureYears: TextView
     private lateinit var btnTenureMonths: TextView
-    private lateinit var tvTenureUnitIcon: TextView
 
     private lateinit var tvEmiAmount: TextView
     private lateinit var tvTotalPrincipal: TextView
@@ -55,6 +54,7 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
         initViews()
         setupListeners()
+        // Starts completely blank
         calculateEmi()
     }
 
@@ -65,7 +65,6 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
         btnTenureYears = findViewById(R.id.btnTenureYears)
         btnTenureMonths = findViewById(R.id.btnTenureMonths)
-        tvTenureUnitIcon = findViewById(R.id.tvTenureUnitIcon)
 
         tvEmiAmount = findViewById(R.id.tvEmiAmount)
         tvTotalPrincipal = findViewById(R.id.tvTotalPrincipal)
@@ -75,10 +74,10 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
         viewPrincipalBar = findViewById(R.id.viewPrincipalBar)
         viewInterestBar = findViewById(R.id.viewInterestBar)
 
-        // Set default values
-        etPrincipal.setText("100000")
-        etInterestRate.setText("8.5")
-        etTenure.setText("5")
+        // Opens completely blank
+        etPrincipal.setText("")
+        etInterestRate.setText("")
+        etTenure.setText("")
     }
 
     private fun setupListeners() {
@@ -94,43 +93,7 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
         etInterestRate.addTextChangedListener(watcher)
         etTenure.addTextChangedListener(watcher)
 
-        // Principal quick chips
-        findViewById<MaterialButton>(R.id.chipAdd10k).setOnClickListener {
-            vibrateTap(it)
-            addPrincipal(10000.0)
-        }
-        findViewById<MaterialButton>(R.id.chipAdd50k).setOnClickListener {
-            vibrateTap(it)
-            addPrincipal(50000.0)
-        }
-        findViewById<MaterialButton>(R.id.chipAdd100k).setOnClickListener {
-            vibrateTap(it)
-            addPrincipal(100000.0)
-        }
-        findViewById<MaterialButton>(R.id.chipClearPrincipal).setOnClickListener {
-            vibrateTap(it)
-            etPrincipal.setText("")
-        }
-
-        // Rate quick chips
-        findViewById<MaterialButton>(R.id.chipRate75).setOnClickListener {
-            vibrateTap(it)
-            etInterestRate.setText("7.5")
-        }
-        findViewById<MaterialButton>(R.id.chipRate85).setOnClickListener {
-            vibrateTap(it)
-            etInterestRate.setText("8.5")
-        }
-        findViewById<MaterialButton>(R.id.chipRate10).setOnClickListener {
-            vibrateTap(it)
-            etInterestRate.setText("10.0")
-        }
-        findViewById<MaterialButton>(R.id.chipRate12).setOnClickListener {
-            vibrateTap(it)
-            etInterestRate.setText("12.0")
-        }
-
-        // Tenure unit toggle
+        // Segmented Tenure unit switch
         btnTenureYears.setOnClickListener {
             if (!isTenureInYears) {
                 vibrateTap(it)
@@ -144,28 +107,6 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
             }
         }
 
-        // Tenure quick chips
-        findViewById<MaterialButton>(R.id.chipTenure1).setOnClickListener {
-            vibrateTap(it)
-            etTenure.setText(if (isTenureInYears) "1" else "12")
-        }
-        findViewById<MaterialButton>(R.id.chipTenure3).setOnClickListener {
-            vibrateTap(it)
-            etTenure.setText(if (isTenureInYears) "3" else "36")
-        }
-        findViewById<MaterialButton>(R.id.chipTenure5).setOnClickListener {
-            vibrateTap(it)
-            etTenure.setText(if (isTenureInYears) "5" else "60")
-        }
-        findViewById<MaterialButton>(R.id.chipTenure10).setOnClickListener {
-            vibrateTap(it)
-            etTenure.setText(if (isTenureInYears) "10" else "120")
-        }
-        findViewById<MaterialButton>(R.id.chipTenure20).setOnClickListener {
-            vibrateTap(it)
-            etTenure.setText(if (isTenureInYears) "20" else "240")
-        }
-
         // Action buttons
         findViewById<MaterialButton>(R.id.btnCalculate).setOnClickListener {
             vibrateTap(it)
@@ -175,25 +116,19 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
         findViewById<MaterialButton>(R.id.btnReset).setOnClickListener {
             vibrateTap(it)
-            etPrincipal.setText("100000")
-            etInterestRate.setText("8.5")
-            etTenure.setText("5")
+            etPrincipal.setText("")
+            etInterestRate.setText("")
+            etTenure.setText("")
             setTenureUnit(true)
             calculateEmi()
         }
-    }
-
-    private fun addPrincipal(amount: Double) {
-        val current = etPrincipal.text.toString().toDoubleOrNull() ?: 0.0
-        val updated = current + amount
-        etPrincipal.setText(wholeFormat.format(updated).replace(",", ""))
     }
 
     private fun setTenureUnit(years: Boolean) {
         isTenureInYears = years
         val currentTenure = etTenure.text.toString().toDoubleOrNull()
         if (years) {
-            btnTenureYears.setBackgroundColor(getColor(R.color.red))
+            btnTenureYears.setBackgroundResource(R.drawable.bg_segmented_active)
             btnTenureYears.setTextColor(getColor(R.color.full_white))
             btnTenureMonths.setBackgroundResource(0)
             btnTenureMonths.setTextColor(getColor(R.color.settings_subtitle_dark))
@@ -201,13 +136,8 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
                 val convertedYears = (currentTenure / 12.0).toInt().coerceAtLeast(1)
                 etTenure.setText(convertedYears.toString())
             }
-            findViewById<MaterialButton>(R.id.chipTenure1).text = "1Y"
-            findViewById<MaterialButton>(R.id.chipTenure3).text = "3Y"
-            findViewById<MaterialButton>(R.id.chipTenure5).text = "5Y"
-            findViewById<MaterialButton>(R.id.chipTenure10).text = "10Y"
-            findViewById<MaterialButton>(R.id.chipTenure20).text = "20Y"
         } else {
-            btnTenureMonths.setBackgroundColor(getColor(R.color.red))
+            btnTenureMonths.setBackgroundResource(R.drawable.bg_segmented_active)
             btnTenureMonths.setTextColor(getColor(R.color.full_white))
             btnTenureYears.setBackgroundResource(0)
             btnTenureYears.setTextColor(getColor(R.color.settings_subtitle_dark))
@@ -215,11 +145,6 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
                 val convertedMonths = (currentTenure * 12.0).toInt()
                 etTenure.setText(convertedMonths.toString())
             }
-            findViewById<MaterialButton>(R.id.chipTenure1).text = "12M"
-            findViewById<MaterialButton>(R.id.chipTenure3).text = "36M"
-            findViewById<MaterialButton>(R.id.chipTenure5).text = "60M"
-            findViewById<MaterialButton>(R.id.chipTenure10).text = "120M"
-            findViewById<MaterialButton>(R.id.chipTenure20).text = "240M"
         }
         calculateEmi()
     }
@@ -232,11 +157,11 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
         val totalMonths = if (isTenureInYears) rawTenure * 12.0 else rawTenure
 
-        if (principal <= 0 || totalMonths <= 0) {
+        if (principal <= 0.0 || totalMonths <= 0.0) {
             tvEmiAmount.text = "--"
-            tvTotalPrincipal.text = "$ 0"
+            tvTotalPrincipal.text = if (principal > 0) "$ ${wholeFormat.format(principal)}" else "$ 0"
             tvTotalInterest.text = "$ 0"
-            tvTotalPayable.text = "$ 0"
+            tvTotalPayable.text = if (principal > 0) "$ ${wholeFormat.format(principal)}" else "$ 0"
             updateBarRatio(50f, 50f)
             return
         }
@@ -247,7 +172,7 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
         val totalPayment: Double
         val totalInterest: Double
 
-        if (monthlyRate == 0.0) {
+        if (monthlyRate <= 0.0) {
             monthlyEmi = principal / totalMonths
             totalPayment = principal
             totalInterest = 0.0
