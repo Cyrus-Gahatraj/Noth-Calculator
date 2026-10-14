@@ -7,9 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
 class CalculationGroupAdapter(
-    private val groups: List<HistoryGroup>
+    private val groups: List<HistoryGroup>,
+    private val onItemClick: ((String) -> Unit)? = null
 ) : RecyclerView.Adapter<CalculationGroupAdapter.GroupViewHolder>() {
 
     class GroupViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,7 +30,7 @@ class CalculationGroupAdapter(
 
         holder.calculationList.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = CalculationAdapter(group.calculations.toMutableList())
+            adapter = CalculationAdapter(group.calculations.toMutableList(), onItemClick)
             isNestedScrollingEnabled = false
         }
     }

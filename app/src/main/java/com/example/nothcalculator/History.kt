@@ -1,6 +1,8 @@
 package com.example.nothcalculator
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -46,7 +48,28 @@ class History : AppCompatActivity(), CalculatorGestureListener {
                 .groupBy { it.date }
                 .map { (date, calculations) -> HistoryGroup(date, calculations) }
 
-            recyclerView.adapter = CalculationGroupAdapter(groupedHistory)
+            recyclerView.adapter = CalculationGroupAdapter(groupedHistory) { selectedValue ->
+                val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+                if (settingsPrefs.getBoolean("vibration", true)) {
+                    recyclerView.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                }
+
+                val resultIntent = Intent().apply {
+                    putExtra("selected_calculation", selectedValue)
+                }
+                setResult(RESULT_OK, resultIntent)
+
+                val caller = intent.getStringExtra("caller_activity")
+                if (callingActivity == null && caller != null) {
+                    val targetClass = if (caller == "Scientific") Scientific::class.java else MainActivity::class.java
+                    val resumeIntent = Intent(this, targetClass).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        putExtra("selected_calculation", selectedValue)
+                    }
+                    startActivity(resumeIntent)
+                }
+                finish()
+            }
         }
 
         // Header setup
@@ -55,7 +78,7 @@ class History : AppCompatActivity(), CalculatorGestureListener {
         header.setBackButton { finish() }
 
         clearButton.setOnClickListener {
-            val settingsPrefs = getSharedPreferences("Settings", android.content.Context.MODE_PRIVATE)
+            val settingsPrefs = getSharedPreferences("Settings", Context.MODE_PRIVATE)
             if (settingsPrefs.getBoolean("vibration", true)) {
                 it.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
             }

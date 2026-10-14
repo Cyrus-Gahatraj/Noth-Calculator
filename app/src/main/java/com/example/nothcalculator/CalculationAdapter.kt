@@ -6,24 +6,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class CalculationAdapter(private val listOfCalculation: MutableList<CalculationHistory>) :
-    RecyclerView.Adapter<CalculationAdapter.ViewHolder>() {
-
+class CalculationAdapter(
+    private val listOfCalculation: MutableList<CalculationHistory>,
+    private val onItemClick: ((String) -> Unit)? = null
+) : RecyclerView.Adapter<CalculationAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val expression: TextView
-        val result: TextView
-
-        init {
-            expression = view.findViewById(R.id.expressionText)
-            result = view.findViewById(R.id.resultText)
-        }
+        val expression: TextView = view.findViewById(R.id.expressionText)
+        val result: TextView = view.findViewById(R.id.resultText)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
             .inflate(R.layout.history_layout, viewGroup, false)
-
         return ViewHolder(view)
     }
 
@@ -32,8 +27,21 @@ class CalculationAdapter(private val listOfCalculation: MutableList<CalculationH
 
         viewHolder.expression.text = calculation.expression
         viewHolder.result.text = if (calculation.result.startsWith("=")) calculation.result else "= ${calculation.result}"
+
+        val cleanResult = calculation.result.removePrefix("=").trim()
+
+        viewHolder.result.setOnClickListener {
+            onItemClick?.invoke(cleanResult)
+        }
+
+        viewHolder.expression.setOnClickListener {
+            onItemClick?.invoke(calculation.expression)
+        }
+
+        viewHolder.itemView.setOnClickListener {
+            onItemClick?.invoke(cleanResult)
+        }
     }
 
     override fun getItemCount() = listOfCalculation.size
-
 }

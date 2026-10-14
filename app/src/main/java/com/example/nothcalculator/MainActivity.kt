@@ -33,6 +33,18 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
 
     private lateinit var gestureDetector: CalculatorGestureDetector
 
+    private val historyLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selected = result.data?.getStringExtra("selected_calculation")
+            if (!selected.isNullOrEmpty()) {
+                expression = selected
+                updateExpressionDisplay()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -52,6 +64,29 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         expressionScrollView = calcDisplay.findViewById(R.id.expressionScrollView)
         resultScrollView = calcDisplay.findViewById(R.id.resultScrollView)
 
+        expressionView.setOnClickListener {
+            if (isResultShown) {
+                vibrateClick(it)
+                isResultShown = false
+                resultScrollView.visibility = View.GONE
+                expressionView.alpha = 1.0f
+                expressionScrollView.post {
+                    expressionScrollView.fullScroll(View.FOCUS_RIGHT)
+                }
+            }
+        }
+
+        resultView.setOnClickListener {
+            if (isResultShown) {
+                vibrateClick(it)
+                val clean = resultView.text.toString().removePrefix("=").trim()
+                if (clean != "Error") {
+                    expression = clean
+                    updateExpressionDisplay()
+                }
+            }
+        }
+
         gestureDetector = CalculatorGestureDetector(this, this)
 
         settingBtn = calcDisplay.findViewById(R.id.btnSettings)
@@ -59,6 +94,12 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
             Intent(this@MainActivity, Settings::class.java).also {
                 startActivity(it)
             }
+        }
+
+        val initialCalc = intent?.getStringExtra("selected_calculation")
+        if (!initialCalc.isNullOrEmpty()) {
+            expression = initialCalc
+            updateExpressionDisplay()
         }
     }
 
@@ -243,10 +284,21 @@ class MainActivity : AppCompatActivity(), CalculatorGestureListener {
         return super.onTouchEvent(event)
     }
 
-    override fun onSwipeDown() {
-        Intent(this@MainActivity, History::class.java).also {
-            startActivity(it)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val selected = intent.getStringExtra("selected_calculation")
+        if (!selected.isNullOrEmpty()) {
+            expression = selected
+            updateExpressionDisplay()
         }
+    }
+
+    override fun onSwipeDown() {
+        val intent = Intent(this@MainActivity, History::class.java).apply {
+            putExtra("caller_activity", "MainActivity")
+        }
+        historyLauncher.launch(intent)
     }
 
     override fun onSwipeLeft() {

@@ -35,8 +35,19 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
     private lateinit var expressionScrollView: HorizontalScrollView
     private lateinit var resultScrollView: HorizontalScrollView
     private lateinit var settingBtn: ImageButton
-
     private lateinit var modeBadge: TextView
+
+    private val historyLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val selected = result.data?.getStringExtra("selected_calculation")
+            if (!selected.isNullOrEmpty()) {
+                expression = selected
+                updateExpressionDisplay()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +58,29 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         resultView = calcDisplay.findViewById(R.id.resultView)
         expressionScrollView = calcDisplay.findViewById(R.id.expressionScrollView)
         resultScrollView = calcDisplay.findViewById(R.id.resultScrollView)
+
+        expressionView.setOnClickListener {
+            if (isResultShown) {
+                vibrateClick(it)
+                isResultShown = false
+                resultScrollView.visibility = View.GONE
+                expressionView.alpha = 1.0f
+                expressionScrollView.post {
+                    expressionScrollView.fullScroll(View.FOCUS_RIGHT)
+                }
+            }
+        }
+
+        resultView.setOnClickListener {
+            if (isResultShown) {
+                vibrateClick(it)
+                val clean = resultView.text.toString().removePrefix("=").trim()
+                if (clean != "Error") {
+                    expression = clean
+                    updateExpressionDisplay()
+                }
+            }
+        }
 
         modeBadge = calcDisplay.findViewById(R.id.tvModeBadge)
         modeBadge.visibility = View.VISIBLE
@@ -66,6 +100,12 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         settingBtn = calcDisplay.findViewById(R.id.btnSettings)
         settingBtn.setOnClickListener {
             startActivity(Intent(this@Scientific, Settings::class.java))
+        }
+
+        val initialCalc = intent?.getStringExtra("selected_calculation")
+        if (!initialCalc.isNullOrEmpty()) {
+            expression = initialCalc
+            updateExpressionDisplay()
         }
     }
 
@@ -342,8 +382,21 @@ class Scientific : AppCompatActivity(), CalculatorGestureListener {
         return super.onTouchEvent(event)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val selected = intent.getStringExtra("selected_calculation")
+        if (!selected.isNullOrEmpty()) {
+            expression = selected
+            updateExpressionDisplay()
+        }
+    }
+
     override fun onSwipeDown() {
-        startActivity(Intent(this@Scientific, History::class.java))
+        val intent = Intent(this@Scientific, History::class.java).apply {
+            putExtra("caller_activity", "Scientific")
+        }
+        historyLauncher.launch(intent)
     }
 
     override fun onSwipeLeft() {
