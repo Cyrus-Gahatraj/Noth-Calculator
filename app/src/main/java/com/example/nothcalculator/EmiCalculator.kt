@@ -14,6 +14,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.ScrollView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import java.text.DecimalFormat
@@ -21,6 +24,7 @@ import kotlin.math.pow
 
 class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
+    private lateinit var emiScrollView: ScrollView
     private lateinit var etPrincipal: EditText
     private lateinit var etInterestRate: EditText
     private lateinit var etTenure: EditText
@@ -54,11 +58,13 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
 
         initViews()
         setupListeners()
+        setupWindowInsets()
         // Starts completely blank
         calculateEmi()
     }
 
     private fun initViews() {
+        emiScrollView = findViewById(R.id.emiScrollView)
         etPrincipal = findViewById(R.id.etPrincipal)
         etInterestRate = findViewById(R.id.etInterestRate)
         etTenure = findViewById(R.id.etTenure)
@@ -80,6 +86,28 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
         etTenure.setText("")
     }
 
+    private fun setupWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.emiRoot)) { _, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val sysInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val isKeyboardVisible = imeInsets.bottom > 0
+            val bottomPadding = if (isKeyboardVisible) imeInsets.bottom else sysInsets.bottom
+            emiScrollView.setPadding(0, 0, 0, bottomPadding)
+
+            if (isKeyboardVisible) {
+                emiScrollView.postDelayed({
+                    currentFocus?.let { focused ->
+                        val rect = android.graphics.Rect()
+                        focused.getDrawingRect(rect)
+                        emiScrollView.offsetDescendantRectToMyCoords(focused, rect)
+                        emiScrollView.smoothScrollTo(0, rect.top - (24 * resources.displayMetrics.density).toInt())
+                    }
+                }, 150)
+            }
+            insets
+        }
+    }
+
     private fun setupListeners() {
         val watcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -92,6 +120,20 @@ class EmiCalculator : AppCompatActivity(), CalculatorGestureListener {
         etPrincipal.addTextChangedListener(watcher)
         etInterestRate.addTextChangedListener(watcher)
         etTenure.addTextChangedListener(watcher)
+
+        val focusListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                emiScrollView.postDelayed({
+                    val rect = android.graphics.Rect()
+                    v.getDrawingRect(rect)
+                    emiScrollView.offsetDescendantRectToMyCoords(v, rect)
+                    emiScrollView.smoothScrollTo(0, rect.top - (24 * resources.displayMetrics.density).toInt())
+                }, 150)
+            }
+        }
+        etPrincipal.onFocusChangeListener = focusListener
+        etInterestRate.onFocusChangeListener = focusListener
+        etTenure.onFocusChangeListener = focusListener
 
         // Segmented Tenure unit switch
         btnTenureYears.setOnClickListener {

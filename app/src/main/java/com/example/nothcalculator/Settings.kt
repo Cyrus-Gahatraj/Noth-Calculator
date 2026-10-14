@@ -180,7 +180,7 @@ class Settings : AppCompatActivity() {
         val versionName = try {
             packageManager.getPackageInfo(packageName, 0).versionName
         } catch (_: Exception) {
-            "0.4.9"
+            "0.4.10"
         }
         versionSubtitle.text = "Version $versionName • Nothing OS aesthetic"
 

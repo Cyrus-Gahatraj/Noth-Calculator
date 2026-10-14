@@ -14,16 +14,22 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.NestedScrollView
 import com.google.android.material.button.MaterialButton
 import java.util.UUID
 
 class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
 
     private lateinit var graphView: GraphView
+    private lateinit var functionsScrollView: NestedScrollView
     private lateinit var functionsContainer: LinearLayout
     private lateinit var btnAddFunction: MaterialButton
     private lateinit var gestureDetector: CalculatorGestureDetector
@@ -50,8 +56,11 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
         header.setBackButton { finish() }
 
         graphView = findViewById(R.id.graphView)
+        functionsScrollView = findViewById(R.id.functionsScrollView)
         functionsContainer = findViewById(R.id.functionsContainer)
         btnAddFunction = findViewById(R.id.btnAddFunction)
+
+        setupWindowInsets()
 
         // Initial default function: y1 = sin(x)
         val initialItem = GraphItem(
@@ -81,6 +90,10 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
             graphsList.add(newItem)
             graphView.setGraphs(graphsList)
             renderFunctionViews()
+
+            functionsScrollView.postDelayed({
+                functionsScrollView.fullScroll(View.FOCUS_DOWN)
+            }, 100)
         }
 
         // Floating Zoom Controls on Top Canvas
@@ -97,6 +110,41 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
         findViewById<MaterialButton>(R.id.btnResetZoom).setOnClickListener {
             vibrateTap(it)
             graphView.resetView()
+        }
+    }
+
+    private fun setupWindowInsets() {
+        val graphContainer = findViewById<FrameLayout>(R.id.graphContainer)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.graphRoot)) { _, insets ->
+            val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val sysInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val isKeyboardVisible = imeInsets.bottom > 0
+            val bottomPadding = if (isKeyboardVisible) imeInsets.bottom else sysInsets.bottom
+            functionsScrollView.setPadding(0, 0, 0, bottomPadding)
+
+            val lp = graphContainer.layoutParams as ConstraintLayout.LayoutParams
+            if (isKeyboardVisible) {
+                // Collapse graph to a compact 140dp height when keyboard opens
+                lp.height = (140 * resources.displayMetrics.density).toInt()
+                lp.matchConstraintPercentHeight = 0f
+            } else {
+                // Restore graph to 48% height when keyboard is dismissed
+                lp.height = 0
+                lp.matchConstraintPercentHeight = 0.48f
+            }
+            graphContainer.layoutParams = lp
+
+            if (isKeyboardVisible) {
+                functionsScrollView.postDelayed({
+                    currentFocus?.let { focused ->
+                        val rect = android.graphics.Rect()
+                        focused.getDrawingRect(rect)
+                        functionsScrollView.offsetDescendantRectToMyCoords(focused, rect)
+                        functionsScrollView.smoothScrollTo(0, rect.top - (20 * resources.displayMetrics.density).toInt())
+                    }
+                }, 150)
+            }
+            insets
         }
     }
 
@@ -151,6 +199,17 @@ class GraphCalculator : AppCompatActivity(), CalculatorGestureListener {
                     true
                 } else {
                     false
+                }
+            }
+
+            etFormula.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    functionsScrollView.postDelayed({
+                        val rect = android.graphics.Rect()
+                        rowView.getDrawingRect(rect)
+                        functionsScrollView.offsetDescendantRectToMyCoords(rowView, rect)
+                        functionsScrollView.smoothScrollTo(0, rect.top - (16 * resources.displayMetrics.density).toInt())
+                    }, 150)
                 }
             }
 
