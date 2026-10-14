@@ -134,7 +134,7 @@
                         android:id="@+id/dotActiveScientific"
                         android:layout_width="8dp"
                         android:layout_height="8dp"
-                        android:src="@drawable/dot_red"
+                        android:src="@drawable/dot_yellow"
                         android:visibility="gone"
                         android:contentDescription="Active mode indicator" />
                 </LinearLayout>

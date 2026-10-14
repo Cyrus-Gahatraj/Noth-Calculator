@@ -1,39 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Nothing OS Pitch Palette -->
+    <!-- Nothing OS Palette (Softened dark mode, not pitch OLED) -->
     <color name="full_black">#000000</color>
     <color name="full_white">#FFFFFF</color>
 
-    <!-- Surfaces & Strokes -->
-    <color name="surface_dark">#121214</color>
-    <color name="surface_stroke_dark">#26262A</color>
+    <!-- Surfaces & Backgrounds -->
+    <color name="background_dark">#18181B</color>
+    <color name="surface_dark">#232326</color>
+    <color name="surface_stroke_dark">#34343A</color>
+    <color name="background_light">#F5F5F7</color>
     <color name="surface_light">#FFFFFF</color>
     <color name="surface_stroke_light">#E5E7EB</color>
-    <color name="background_light">#F5F5F7</color>
-    <color name="background_dark">#000000</color>
 
     <!-- Semantic Grayscale -->
-    <color name="black">#000000</color>
+    <color name="black">#18181B</color>
     <color name="white">#F5F5F7</color>
-    <color name="grey">#202024</color>
-    <color name="light_grey">#161618</color>
+    <color name="grey">#323236</color>
+    <color name="light_grey">#26262A</color>
     <color name="smoke_white">#F5F5F7</color>
     <color name="steel">#E2E4E8</color>
 
-    <!-- Nothing Signature Red Accent -->
+    <!-- Nothing Signature Accents: Red & Iconic Yellow -->
     <color name="red">#D71921</color>
     <color name="mute_red">#D71921</color>
     <color name="red_pressed">#B51219</color>
     <color name="red_subtle">#26D71921</color>
-    <color name="yellow">#D71921</color>
+    <color name="nothing_yellow">#F8D332</color>
+    <color name="nothing_yellow_subtle">#26F8D332</color>
+    <color name="yellow">#F8D332</color>
 
-    <!-- Function Buttons (Stealth Industrial Grayscale) -->
-    <color name="blue">#222226</color>
+    <!-- Function Buttons (Tactile Grayscale) -->
+    <color name="blue">#2B2B30</color>
     <color name="sky_blue">#E2E4E8</color>
 
     <!-- Subtitles and Dividers -->
     <color name="settings_subtitle_light">#6B7280</color>
-    <color name="settings_subtitle_dark">#8E8E93</color>
+    <color name="settings_subtitle_dark">#9CA3AF</color>
     <color name="settings_divider_light">#E5E7EB</color>
-    <color name="settings_divider_dark">#26262A</color>
+    <color name="settings_divider_dark">#34343A</color>
 </resources>

@@ -28,7 +28,7 @@
         android:paddingVertical="6dp"
         android:text="DEG"
         android:textSize="12sp"
-        android:textColor="?attr/colorOnBackground"
+        android:textColor="@color/nothing_yellow"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/btnSettings"
         app:layout_constraintEnd_toEndOf="parent"
